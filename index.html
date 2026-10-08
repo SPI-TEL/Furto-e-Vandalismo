@@ -1,0 +1,1305 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard Gerencial - Furto e Vandalismo Planta Interna</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#f0f7ff',
+              100: '#e0effe',
+              500: '#0284c7',
+              700: '#0369a1',
+              800: '#075985',
+              900: '#0c4a6e',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+    body { font-family: 'Inter', sans-serif; }
+    .badge-alert { animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.6; }
+    }
+    /* Custom scrollbar */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #f1f5f9; }
+    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+  </style>
+</head>
+<body class="bg-slate-100 text-slate-800 min-h-screen flex flex-col">
+
+  <!-- TOP HEADER -->
+  <header class="bg-slate-900 text-white shadow-md border-b border-slate-800 sticky top-0 z-40">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex flex-wrap items-center justify-between gap-4">
+      <div class="flex items-center space-x-3">
+        <div class="bg-sky-500 text-white p-2.5 rounded-lg shadow-sm flex items-center justify-center">
+          <i class="fa-solid fa-shield-halved text-xl"></i>
+        </div>
+        <div>
+          <div class="flex items-center space-x-2">
+            <h1 class="text-lg font-bold tracking-tight text-white">Painel Gerencial de Furto & Vandalismo</h1>
+            <span class="bg-sky-500/20 text-sky-300 text-xs px-2 py-0.5 rounded font-medium border border-sky-500/30">Planta Interna</span>
+          </div>
+          <p class="text-xs text-slate-400">DDDs 12 a 19 • Integração PRISMA & Hardening Físico • Alinhamento Semanal de Supervisão</p>
+        </div>
+      </div>
+      
+      <!-- Action buttons -->
+      <div class="flex items-center space-x-3">
+        <div class="text-right hidden sm:block">
+          <p class="text-xs text-slate-400">Última atualização</p>
+          <p class="text-xs font-semibold text-slate-200" id="clock-timestamp">Hoje às 10:45</p>
+        </div>
+        <button onclick="window.print()" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-md text-xs font-medium border border-slate-700 flex items-center gap-1.5 transition">
+          <i class="fa-solid fa-print"></i> Relatório Semanal
+        </button>
+        <button onclick="exportCSV()" class="px-3 py-1.5 bg-sky-600 hover:bg-sky-500 text-white rounded-md text-xs font-semibold shadow-sm flex items-center gap-1.5 transition">
+          <i class="fa-solid fa-file-excel"></i> Exportar Base
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- PRINCÍPIO CHAVE: BANNER DE ALINHAMENTO OPERACIONAL -->
+  <div class="bg-amber-500/10 border-b border-amber-300/40 text-amber-900 px-4 py-2 text-xs">
+    <div class="max-w-7xl mx-auto flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <i class="fa-solid fa-circle-exclamation text-amber-600"></i>
+        <span><strong>Diretriz Operacional:</strong> <em>"Site Recuperado NÃO significa Site Protegido."</em> A recuperação normaliza o sinal; a proteção (blindagem, caixas soldadas e concreto) evita a reincidência.</span>
+      </div>
+      <span class="hidden md:inline-block font-semibold bg-amber-100 text-amber-800 px-2 py-0.5 rounded text-[11px]">Meta Hardening: 100% dos Reincidentes</span>
+    </div>
+  </div>
+
+  <!-- MAIN CONTAINER -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6 flex-1 w-full">
+
+    <!-- KPI CARDS (TOPO) -->
+    <section class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3.5">
+      
+      <!-- Total Ocorrências -->
+      <div class="bg-white p-3.5 rounded-xl border border-slate-200/80 shadow-sm flex flex-col justify-between">
+        <div class="flex items-center justify-between text-slate-500">
+          <span class="text-xs font-medium uppercase tracking-wider">Total Sinistros</span>
+          <i class="fa-solid fa-bolt text-slate-400"></i>
+        </div>
+        <div class="mt-2 flex items-baseline justify-between">
+          <span class="text-2xl font-extrabold text-slate-900" id="kpi-total">38</span>
+          <span class="text-[11px] font-semibold text-rose-600 bg-rose-50 px-1.5 py-0.5 rounded">+4 este mês</span>
+        </div>
+        <p class="text-[10px] text-slate-400 mt-1">Acumulado do período</p>
+      </div>
+
+      <!-- Reincidência 30 Dias -->
+      <div class="bg-white p-3.5 rounded-xl border border-rose-200 shadow-sm flex flex-col justify-between relative overflow-hidden">
+        <div class="absolute top-0 right-0 w-12 h-12 bg-rose-50 rounded-bl-full flex items-start justify-end p-1.5">
+          <span class="w-2 h-2 rounded-full bg-rose-600 badge-alert"></span>
+        </div>
+        <div class="flex items-center justify-between text-rose-700">
+          <span class="text-xs font-semibold uppercase tracking-wider">Reincid. 30 Dias</span>
+          <i class="fa-solid fa-triangle-exclamation text-rose-500"></i>
+        </div>
+        <div class="mt-2 flex items-baseline justify-between">
+          <span class="text-2xl font-extrabold text-rose-600" id="kpi-reinc-30">7</span>
+          <span class="text-[11px] font-semibold text-rose-700 bg-rose-100 px-1.5 py-0.5 rounded">Crítico</span>
+        </div>
+        <p class="text-[10px] text-slate-400 mt-1">Ataques sucessivos em < 30d</p>
+      </div>
+
+      <!-- Reincidência Ano -->
+      <div class="bg-white p-3.5 rounded-xl border border-slate-200/80 shadow-sm flex flex-col justify-between">
+        <div class="flex items-center justify-between text-slate-500">
+          <span class="text-xs font-medium uppercase tracking-wider">Reincidentes Ano</span>
+          <i class="fa-solid fa-rotate-right text-slate-400"></i>
+        </div>
+        <div class="mt-2 flex items-baseline justify-between">
+          <span class="text-2xl font-extrabold text-amber-600" id="kpi-reinc-ano">14</span>
+          <span class="text-[11px] font-semibold text-amber-700 bg-amber-50 px-1.5 py-0.5 rounded">36.8% base</span>
+        </div>
+        <p class="text-[10px] text-slate-400 mt-1">Sites com 2+ ocorrências</p>
+      </div>
+
+      <!-- Recuperados Definitivos vs Provisórios -->
+      <div class="bg-white p-3.5 rounded-xl border border-slate-200/80 shadow-sm flex flex-col justify-between">
+        <div class="flex items-center justify-between text-slate-500">
+          <span class="text-xs font-medium uppercase tracking-wider">Recuperação</span>
+          <i class="fa-solid fa-wrench text-slate-400"></i>
+        </div>
+        <div class="mt-2 flex items-baseline justify-between">
+          <span class="text-2xl font-extrabold text-emerald-600" id="kpi-rec-def">24</span>
+          <span class="text-[11px] font-semibold text-amber-600 bg-amber-50 px-1.5 py-0.5 rounded" id="kpi-rec-prov">11 prov.</span>
+        </div>
+        <p class="text-[10px] text-slate-400 mt-1">3 pendentes de retorno</p>
+      </div>
+
+      <!-- Hardening & Proteção -->
+      <div class="bg-white p-3.5 rounded-xl border border-slate-200/80 shadow-sm flex flex-col justify-between">
+        <div class="flex items-center justify-between text-slate-500">
+          <span class="text-xs font-medium uppercase tracking-wider">Status Hardening</span>
+          <i class="fa-solid fa-lock text-slate-400"></i>
+        </div>
+        <div class="mt-2 flex items-baseline justify-between">
+          <span class="text-2xl font-extrabold text-sky-700" id="kpi-protegidos">16</span>
+          <span class="text-[11px] font-semibold text-rose-600 bg-rose-50 px-1.5 py-0.5 rounded" id="kpi-vulneraveis">15 vulner.</span>
+        </div>
+        <p class="text-[10px] text-slate-400 mt-1">7 parcialmente protegidos</p>
+      </div>
+
+      <!-- Boletins de Ocorrência (BO) -->
+      <div class="bg-white p-3.5 rounded-xl border border-slate-200/80 shadow-sm flex flex-col justify-between">
+        <div class="flex items-center justify-between text-slate-500">
+          <span class="text-xs font-medium uppercase tracking-wider">BOs Abertos</span>
+          <i class="fa-solid fa-file-shield text-slate-400"></i>
+        </div>
+        <div class="mt-2 flex items-baseline justify-between">
+          <span class="text-2xl font-extrabold text-slate-800" id="kpi-bo-abertos">34</span>
+          <span class="text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded" id="kpi-bo-percent">89.4%</span>
+        </div>
+        <p class="text-[10px] text-slate-400 mt-1">4 pendentes de registro</p>
+      </div>
+
+    </section>
+
+    <!-- CONTROL BAR & FILTERS -->
+    <section class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-wrap items-center justify-between gap-4">
+      <div class="flex flex-wrap items-center gap-3 flex-1 min-w-[280px]">
+        <!-- Regional Filter -->
+        <div class="w-full sm:w-auto">
+          <label class="block text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-1">Filtrar Regional / DDD</label>
+          <select id="filter-regional" onchange="applyFilters()" class="w-full sm:w-56 text-xs bg-slate-50 border border-slate-300 rounded-lg p-2 font-medium text-slate-700 focus:ring-2 focus:ring-sky-500 focus:outline-none">
+            <option value="ALL">Todas as Regionais (DDD 12 a 19)</option>
+            <option value="DDD 19 - Região Campinas">DDD 19 - Região Campinas</option>
+            <option value="DDD 19 - Região Piracicaba">DDD 19 - Região Piracicaba</option>
+            <option value="DDD 12 - Vale do Paraíba">DDD 12 - Vale do Paraíba</option>
+            <option value="DDD 13 - Baixada Santista">DDD 13 - Baixada Santista</option>
+            <option value="DDD 14 - Bauru / Marília">DDD 14 - Bauru / Marília</option>
+            <option value="DDD 15 - Sorocaba / Itapetininga">DDD 15 - Sorocaba / Itapetininga</option>
+            <option value="DDD 16 - Ribeirão Preto">DDD 16 - Ribeirão Preto</option>
+            <option value="DDD 17 - São José do Rio Preto">DDD 17 - São José do Rio Preto</option>
+            <option value="DDD 18 - Pres. Prudente / Araçatuba">DDD 18 - Pres. Prudente / Araçatuba</option>
+          </select>
+        </div>
+
+        <!-- Recuperação Filter -->
+        <div class="w-full sm:w-auto">
+          <label class="block text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-1">Status Recuperação</label>
+          <select id="filter-recuperacao" onchange="applyFilters()" class="w-full sm:w-48 text-xs bg-slate-50 border border-slate-300 rounded-lg p-2 font-medium text-slate-700 focus:ring-2 focus:ring-sky-500 focus:outline-none">
+            <option value="ALL">Todos os Status</option>
+            <option value="Recuperado Definitivo">Recuperado Definitivo</option>
+            <option value="Recuperado Provisório">Recuperado Provisório</option>
+            <option value="Pendente de Recuperação">Pendente de Recuperação</option>
+          </select>
+        </div>
+
+        <!-- Proteção Filter -->
+        <div class="w-full sm:w-auto">
+          <label class="block text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-1">Proteção (Hardening)</label>
+          <select id="filter-protecao" onchange="applyFilters()" class="w-full sm:w-48 text-xs bg-slate-50 border border-slate-300 rounded-lg p-2 font-medium text-slate-700 focus:ring-2 focus:ring-sky-500 focus:outline-none">
+            <option value="ALL">Todas as Condições</option>
+            <option value="Protegido">Protegido (Blindado)</option>
+            <option value="Parcialmente Protegido">Parcialmente Protegido</option>
+            <option value="Vulnerável">Vulnerável</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Search Input -->
+      <div class="w-full lg:w-72">
+        <label class="block text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-1">Busca Site / O.S. PRISMA</label>
+        <div class="relative">
+          <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-slate-400 text-xs"></i>
+          <input type="text" id="search-input" onkeyup="applyFilters()" placeholder="Ex: CPS-001 ou PRISMA-100234..." class="w-full pl-8 pr-3 py-1.5 text-xs bg-slate-50 border border-slate-300 rounded-lg text-slate-700 focus:ring-2 focus:ring-sky-500 focus:outline-none">
+        </div>
+      </div>
+    </section>
+
+    <!-- CHARTS SECTION: GRÁFICOS GERENCIAIS -->
+    <section class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+      
+      <!-- Chart 1: Ocorrências por Regional (Identifica a Ofensora) -->
+      <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between">
+        <div class="flex items-center justify-between mb-2">
+          <div>
+            <h2 class="text-xs font-bold uppercase tracking-wider text-slate-700 flex items-center gap-1.5">
+              <i class="fa-solid fa-chart-column text-sky-600"></i> Ocorrências por Regional (DDDs)
+            </h2>
+            <p class="text-[11px] text-slate-400">Identificação da Regional Ofensora</p>
+          </div>
+          <span class="text-[10px] font-bold bg-rose-100 text-rose-700 px-2 py-0.5 rounded">Ofensor: DDD 19 Campinas</span>
+        </div>
+        <div class="h-64 relative">
+          <canvas id="chart-regionais"></canvas>
+        </div>
+        <div class="pt-2 text-[11px] text-slate-500 text-center border-t border-slate-100 flex items-center justify-center gap-4">
+          <span><span class="inline-block w-2.5 h-2.5 bg-rose-500 rounded-sm mr-1"></span> Top 1 Ofensor</span>
+          <span><span class="inline-block w-2.5 h-2.5 bg-sky-500 rounded-sm mr-1"></span> Demais DDDs</span>
+        </div>
+      </div>
+
+      <!-- Chart 2: Recuperação vs Proteção Fisiográfica -->
+      <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between">
+        <div class="flex items-center justify-between mb-2">
+          <div>
+            <h2 class="text-xs font-bold uppercase tracking-wider text-slate-700 flex items-center gap-1.5">
+              <i class="fa-solid fa-chart-pie text-emerald-600"></i> Recuperação vs. Proteção Real
+            </h2>
+            <p class="text-[11px] text-slate-400">Comparativo do status físico dos sites</p>
+          </div>
+          <span class="text-[10px] font-bold bg-amber-100 text-amber-800 px-2 py-0.5 rounded">15 Sites em Risco</span>
+        </div>
+        <div class="h-64 relative">
+          <canvas id="chart-rec-prot"></canvas>
+        </div>
+        <div class="pt-2 text-[11px] text-slate-500 text-center border-t border-slate-100">
+          <p><strong>Atenção:</strong> 11 sites estão com recuperação provisória e sem proteção de entrada de energia.</p>
+        </div>
+      </div>
+
+      <!-- Chart 3: Ações de Hardening Implementadas -->
+      <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between">
+        <div class="flex items-center justify-between mb-2">
+          <div>
+            <h2 class="text-xs font-bold uppercase tracking-wider text-slate-700 flex items-center gap-1.5">
+              <i class="fa-solid fa-shield-virus text-indigo-600"></i> Ações de Hardening Executadas
+            </h2>
+            <p class="text-[11px] text-slate-400">Medidas anti-reincidência instaladas</p>
+          </div>
+          <span class="text-[10px] font-bold bg-slate-100 text-slate-700 px-2 py-0.5 rounded">38 intervenções</span>
+        </div>
+        <div class="h-64 relative">
+          <canvas id="chart-hardening"></canvas>
+        </div>
+        <div class="pt-2 text-[11px] text-slate-500 text-center border-t border-slate-100">
+          <p>Destaque para <strong>Blindagem em Chapa de Aço</strong> e <strong>Caixas Concretadas</strong>.</p>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- SECTION: RANKING DE SITES OFENSORES & PAINEL DE RISCO -->
+    <section class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+      
+      <!-- Top 5 Sites Ofensores (Reincidência Crítica) -->
+      <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col">
+        <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+          <div>
+            <h2 class="text-xs font-bold uppercase tracking-wider text-slate-800 flex items-center gap-1.5">
+              <i class="fa-solid fa-skull-crossbones text-rose-500"></i> Top Sites Ofensores (Reincidentes)
+            </h2>
+            <p class="text-[11px] text-slate-400">Sites com maior concentração de ataques no ano</p>
+          </div>
+          <span class="text-[10px] font-semibold text-rose-700 bg-rose-50 px-2 py-0.5 rounded border border-rose-200">Reunião Semanal</span>
+        </div>
+
+        <div class="divide-y divide-slate-100 mt-2 flex-1">
+          <!-- Site 1 -->
+          <div class="py-2.5 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <span class="w-6 h-6 rounded-full bg-rose-100 text-rose-700 font-bold text-xs flex items-center justify-center">1</span>
+              <div>
+                <p class="text-xs font-bold text-slate-800">CPS-001 • Campinas Centro</p>
+                <p class="text-[10px] text-slate-500">DDD 19 Campinas • Última há 7 dias</p>
+              </div>
+            </div>
+            <div class="text-right">
+              <span class="text-xs font-extrabold text-rose-600">4 ocorrências</span>
+              <p class="text-[10px] text-amber-600 font-medium">Reincid. Outro Ponto</p>
+            </div>
+          </div>
+
+          <!-- Site 2 -->
+          <div class="py-2.5 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <span class="w-6 h-6 rounded-full bg-rose-100 text-rose-700 font-bold text-xs flex items-center justify-center">2</span>
+              <div>
+                <p class="text-xs font-bold text-slate-800">SVP-012 • São Vicente Praia</p>
+                <p class="text-[10px] text-slate-500">DDD 13 Baixada • Última há 12 dias</p>
+              </div>
+            </div>
+            <div class="text-right">
+              <span class="text-xs font-extrabold text-rose-600">3 ocorrências</span>
+              <p class="text-[10px] text-rose-600 font-medium">Reincid. Mesmo Ponto</p>
+            </div>
+          </div>
+
+          <!-- Site 3 -->
+          <div class="py-2.5 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <span class="w-6 h-6 rounded-full bg-amber-100 text-amber-800 font-bold text-xs flex items-center justify-center">3</span>
+              <div>
+                <p class="text-xs font-bold text-slate-800">PIR-008 • Piracicaba Paulicéia</p>
+                <p class="text-[10px] text-slate-500">DDD 19 Piracicaba • Há 19 dias</p>
+              </div>
+            </div>
+            <div class="text-right">
+              <span class="text-xs font-extrabold text-amber-600">3 ocorrências</span>
+              <p class="text-[10px] text-emerald-600 font-medium">Hardening em Andamento</p>
+            </div>
+          </div>
+
+          <!-- Site 4 -->
+          <div class="py-2.5 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <span class="w-6 h-6 rounded-full bg-slate-100 text-slate-700 font-bold text-xs flex items-center justify-center">4</span>
+              <div>
+                <p class="text-xs font-bold text-slate-800">SJC-045 • S. José Campos Sul</p>
+                <p class="text-[10px] text-slate-500">DDD 12 Vale • Há 24 dias</p>
+              </div>
+            </div>
+            <div class="text-right">
+              <span class="text-xs font-bold text-slate-700">2 ocorrências</span>
+              <p class="text-[10px] text-slate-500">Recuperado Definitivo</p>
+            </div>
+          </div>
+
+          <!-- Site 5 -->
+          <div class="py-2.5 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <span class="w-6 h-6 rounded-full bg-slate-100 text-slate-700 font-bold text-xs flex items-center justify-center">5</span>
+              <div>
+                <p class="text-xs font-bold text-slate-800">BAU-042 • Bauru Distrito</p>
+                <p class="text-[10px] text-slate-500">DDD 14 Bauru • Há 33 dias</p>
+              </div>
+            </div>
+            <div class="text-right">
+              <span class="text-xs font-bold text-slate-700">2 ocorrências</span>
+              <p class="text-[10px] text-rose-500">Pendente Fechamento Perímetro</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-3 pt-2 border-t border-slate-100 text-center">
+          <button onclick="filterTopOffenders()" class="text-xs font-semibold text-sky-600 hover:text-sky-700 transition">
+            Ver apenas ocorrências dos 5 maiores ofensores &rarr;
+          </button>
+        </div>
+      </div>
+
+      <!-- Checklist de Ações para Reunião de Supervisão -->
+      <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col lg:col-span-2">
+        <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+          <div>
+            <h2 class="text-xs font-bold uppercase tracking-wider text-slate-800 flex items-center gap-1.5">
+              <i class="fa-solid fa-list-check text-sky-600"></i> Roteiro de Tratativa Semanal com Supervisão Regional
+            </h2>
+            <p class="text-[11px] text-slate-400">Pontos obrigatórios a serem auditados por regional (DDDs 12 ao 19)</p>
+          </div>
+          <span class="text-[11px] bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-mono">Pauta Semanal</span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-3 flex-1">
+          
+          <div class="bg-slate-50 p-3 rounded-lg border border-slate-200">
+            <div class="flex items-center gap-2 mb-1.5">
+              <span class="w-5 h-5 rounded-full bg-sky-600 text-white text-[11px] font-bold flex items-center justify-center">1</span>
+              <h3 class="text-xs font-bold text-slate-800">Saneamento PRISMA</h3>
+            </div>
+            <p class="text-[11px] text-slate-600 leading-relaxed">
+              Verificar se todas as ocorrências reportadas no grupo de WhatsApp possuem O.S. aberta no PRISMA para posterior batimento com o controle Vier.
+            </p>
+            <div class="mt-2 text-[10px] font-semibold text-sky-700 flex items-center gap-1">
+              <i class="fa-solid fa-check"></i> 100% de cobertura de O.S.
+            </div>
+          </div>
+
+          <div class="bg-slate-50 p-3 rounded-lg border border-slate-200">
+            <div class="flex items-center gap-2 mb-1.5">
+              <span class="w-5 h-5 rounded-full bg-amber-600 text-white text-[11px] font-bold flex items-center justify-center">2</span>
+              <h3 class="text-xs font-bold text-slate-800">Provisórios &gt; Definitivos</h3>
+            </div>
+            <p class="text-[11px] text-slate-600 leading-relaxed">
+              Exigir cronograma para os <strong>11 sites com recuperação provisória</strong>. Priorizar substituição do cobre por cabos de alumínio/híbrido.
+            </p>
+            <div class="mt-2 text-[10px] font-semibold text-amber-700 flex items-center gap-1">
+              <i class="fa-solid fa-clock"></i> SLA máx: 7 dias para provisório
+            </div>
+          </div>
+
+          <div class="bg-slate-50 p-3 rounded-lg border border-slate-200">
+            <div class="flex items-center gap-2 mb-1.5">
+              <span class="w-5 h-5 rounded-full bg-emerald-600 text-white text-[11px] font-bold flex items-center justify-center">3</span>
+              <h3 class="text-xs font-bold text-slate-800">Validação de Hardening</h3>
+            </div>
+            <p class="text-[11px] text-slate-600 leading-relaxed">
+              Cobrar evidência fotográfica das caixas soldadas, chapas de aço instaladas e fechamento de esteiramento antes de declarar o site como <em>Protegido</em>.
+            </p>
+            <div class="mt-2 text-[10px] font-semibold text-emerald-700 flex items-center gap-1">
+              <i class="fa-solid fa-camera"></i> Evidência fotográfica obrigatória
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Alerta de BO pendente -->
+        <div class="mt-3 bg-rose-50 border border-rose-200 rounded-lg p-2.5 flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <i class="fa-solid fa-triangle-exclamation text-rose-600 text-sm"></i>
+            <span class="text-xs text-rose-900 font-medium">
+              <strong>Atenção:</strong> Existem <strong>4 ocorrências sem Boletim de Ocorrência cadastrado</strong>. Cobrar supervisão de Bauru (DDD 14) e Sorocaba (DDD 15).
+            </span>
+          </div>
+          <button onclick="filterSemBO()" class="text-[11px] font-bold text-rose-700 underline hover:text-rose-900">Filtrar pendências de BO</button>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- SECTION: TABELA TRANSACIONAL DE OCORRÊNCIAS -->
+    <section class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+      
+      <!-- Table Header & Controls -->
+      <div class="p-4 border-b border-slate-100 flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <h2 class="text-xs font-bold uppercase tracking-wider text-slate-800 flex items-center gap-1.5">
+            <i class="fa-solid fa-table-list text-sky-600"></i> Base Transacional de Ocorrências e Hardening
+          </h2>
+          <p class="text-[11px] text-slate-400">Detalhamento individualizado por O.S. PRISMA, site e reincidência</p>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <span class="text-xs text-slate-500" id="rows-count">Exibindo 38 ocorrências</span>
+          <button onclick="resetFilters()" class="text-xs text-slate-600 hover:text-sky-600 px-2.5 py-1 border border-slate-200 rounded hover:bg-slate-50 transition">
+            Limpar Filtros
+          </button>
+        </div>
+      </div>
+
+      <!-- Table responsive container -->
+      <div class="overflow-x-auto max-h-[500px]">
+        <table class="w-full text-left border-collapse text-xs">
+          <thead class="bg-slate-50 text-slate-600 uppercase text-[10px] tracking-wider font-semibold sticky top-0 z-10 border-b border-slate-200">
+            <tr>
+              <th class="p-3">Data / Ocorrência</th>
+              <th class="p-3">Regional / DDD</th>
+              <th class="p-3">Site / O.S. PRISMA</th>
+              <th class="p-3">Item Afetado</th>
+              <th class="p-3">Recuperação & Material</th>
+              <th class="p-3">Status de Proteção</th>
+              <th class="p-3">Reincidência</th>
+              <th class="p-3">B.O. / Constatação</th>
+              <th class="p-3 text-center">Ações</th>
+            </tr>
+          </thead>
+          <tbody id="table-body" class="divide-y divide-slate-100 font-normal text-slate-700">
+            <!-- As linhas da tabela são renderizadas dinamicamente via JS -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Table Footer -->
+      <div class="p-3 bg-slate-50 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+        <span>Legenda: <span class="text-emerald-700 font-semibold">● Definitivo/Protegido</span> | <span class="text-amber-700 font-semibold">● Provisório</span> | <span class="text-rose-700 font-semibold">● Vulnerável</span></span>
+        <span>Conforme dados validados nas reuniões semanais</span>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- MODAL: DETALHES COMPLETOS DO SITE E HARDENING -->
+  <div id="detail-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-2xl w-full shadow-2xl border border-slate-200 overflow-hidden transform transition-all">
+      <div class="bg-slate-900 text-white p-4 flex items-center justify-between">
+        <div class="flex items-center space-x-2">
+          <i class="fa-solid fa-shield-halved text-sky-400 text-lg"></i>
+          <div>
+            <h3 class="text-sm font-bold" id="modal-site-title">Detalhes da Ocorrência</h3>
+            <p class="text-[11px] text-slate-400" id="modal-site-subtitle">O.S. PRISMA: --</p>
+          </div>
+        </div>
+        <button onclick="closeModal()" class="text-slate-400 hover:text-white text-lg p-1">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <div class="p-6 space-y-4 max-h-[80vh] overflow-y-auto text-xs">
+        
+        <!-- Grid de Informações Básicas -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-slate-50 p-3 rounded-xl border border-slate-200">
+          <div>
+            <span class="text-[10px] text-slate-400 uppercase font-semibold block">Data do Evento</span>
+            <span class="font-bold text-slate-800" id="m-data">--</span>
+          </div>
+          <div>
+            <span class="text-[10px] text-slate-400 uppercase font-semibold block">Regional</span>
+            <span class="font-bold text-slate-800" id="m-regional">--</span>
+          </div>
+          <div>
+            <span class="text-[10px] text-slate-400 uppercase font-semibold block">Impacto Sinal</span>
+            <span class="font-bold text-slate-800" id="m-impacto">--</span>
+          </div>
+          <div>
+            <span class="text-[10px] text-slate-400 uppercase font-semibold block">Boletim Ocorrência</span>
+            <span class="font-bold text-slate-800" id="m-bo">--</span>
+          </div>
+        </div>
+
+        <!-- Bloco de Recuperação Operacional -->
+        <div class="border border-slate-200 rounded-xl p-3.5">
+          <h4 class="font-bold text-slate-800 text-xs flex items-center gap-1.5 mb-2">
+            <i class="fa-solid fa-wrench text-amber-600"></i> Status de Recuperação (Serviço)
+          </h4>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-slate-600">
+            <div>
+              <p><strong>Condição:</strong> <span id="m-rec-status" class="font-semibold">--</span></p>
+              <p><strong>Material Aplicado:</strong> <span id="m-rec-material">--</span></p>
+            </div>
+            <div>
+              <p><strong>Pendências para Finalização:</strong></p>
+              <p id="m-rec-pendencias" class="text-slate-500 italic">--</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bloco de Hardening e Proteção FÍSICA -->
+        <div class="border border-slate-200 rounded-xl p-3.5 bg-slate-50/50">
+          <h4 class="font-bold text-slate-800 text-xs flex items-center gap-1.5 mb-2">
+            <i class="fa-solid fa-shield-cat text-sky-600"></i> Medidas Físicas de Hardening (Proteção Anti-Furto)
+          </h4>
+          
+          <div class="grid grid-cols-2 gap-2 text-[11px]" id="modal-hardening-checklist">
+            <!-- Injetado dinamicamente -->
+          </div>
+
+          <div class="mt-3 pt-3 border-t border-slate-200 text-slate-700">
+            <p><strong>Pontos ainda vulneráveis no site:</strong></p>
+            <p id="m-vulneraveis" class="text-rose-700 font-medium mt-0.5">--</p>
+            <p class="mt-2 text-slate-500 text-[11px]"><strong>Avaliação de Risco Futuro:</strong> <span id="m-risco-texto">--</span></p>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="bg-slate-100 p-3 text-right border-t border-slate-200">
+        <button onclick="closeModal()" class="px-4 py-1.5 bg-slate-800 hover:bg-slate-700 text-white rounded-lg text-xs font-semibold">
+          Fechar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCRIPT: DADOS, CHARTS E LÓGICA INTERATIVA -->
+  <script>
+    // BASE DE DADOS COMPLETA (MOCK REALISTA DE DDD 12 AO 19)
+    const ocorrenciasData = [
+      {
+        id: "OC-2026-0001",
+        data: "2026-10-01",
+        regional: "DDD 19 - Região Campinas",
+        codSite: "CPS-001",
+        nomeSite: "Campinas Centro",
+        osPrisma: "PRISMA-100234",
+        tipoEvento: "Furto",
+        itemAfetado: "Cabos de Cobre",
+        impacto: "Off-Air (Total)",
+        recuperacao: "Recuperado Definitivo",
+        material: "Alumínio",
+        pendencia: "Nenhuma",
+        protecao: "Protegido",
+        hardening: { torre: true, chapaAco: true, caixasSoldadas: true, entradaAC: true, quadros: true, perimetro: true },
+        pontosVulneraveis: "Nenhum ponto crítico mapeado",
+        reincidenteAno: true,
+        reincidente30d: true,
+        tipoReincidencia: "Reincidência em Outro Ponto",
+        bo: "Sim (BO-98123/26)",
+        autoConstatacao: "Sim",
+        risco: "Baixo - Site Blindado"
+      },
+      {
+        id: "OC-2026-0002",
+        data: "2026-10-02",
+        regional: "DDD 19 - Região Campinas",
+        codSite: "CPS-001",
+        nomeSite: "Campinas Centro",
+        osPrisma: "PRISMA-100450",
+        tipoEvento: "Furto",
+        itemAfetado: "Transformador / Entrada AC",
+        impacto: "Off-Air (Total)",
+        recuperacao: "Recuperado Provisório",
+        material: "Cobre",
+        pendencia: "Substituição de barramento e caixa padrão",
+        protecao: "Parcialmente Protegido",
+        hardening: { torre: true, chapaAco: true, caixasSoldadas: false, entradaAC: false, quadros: true, perimetro: true },
+        pontosVulneraveis: "Entrada de energia da concessionária sem grade soldada",
+        reincidenteAno: true,
+        reincidente30d: true,
+        tipoReincidencia: "Reincidência em Outro Ponto",
+        bo: "Sim (BO-99100/26)",
+        autoConstatacao: "Sim",
+        risco: "Alto - Entrada AC exposta"
+      },
+      {
+        id: "OC-2026-0003",
+        data: "2026-09-28",
+        regional: "DDD 13 - Baixada Santista",
+        codSite: "SVP-012",
+        nomeSite: "São Vicente Praia",
+        osPrisma: "PRISMA-099412",
+        tipoEvento: "Furto",
+        itemAfetado: "Cabos de Cobre",
+        impacto: "Off-Air (Total)",
+        recuperacao: "Recuperado Provisório",
+        material: "Cobre",
+        pendencia: "Lançamento definitivo em cabo de alumínio",
+        protecao: "Vulnerável",
+        hardening: { torre: false, chapaAco: false, caixasSoldadas: false, entradaAC: false, quadros: false, perimetro: false },
+        pontosVulneraveis: "Esteiramento externo totalmente acessível pela cerca quebrada",
+        reincidenteAno: true,
+        reincidente30d: true,
+        tipoReincidencia: "Reincidência no Mesmo Ponto",
+        bo: "Sim (BO-44321/26)",
+        autoConstatacao: "Sim",
+        risco: "Crítico - Área de alta criminalidade sem cerca"
+      },
+      {
+        id: "OC-2026-0004",
+        data: "2026-09-25",
+        regional: "DDD 19 - Região Piracicaba",
+        codSite: "PIR-008",
+        nomeSite: "Piracicaba Paulicéia",
+        osPrisma: "PRISMA-098877",
+        tipoEvento: "Furto e Vandalismo",
+        itemAfetado: "Ar Condicionado / Climatizador",
+        impacto: "Degradação do Sinal",
+        recuperacao: "Recuperado Definitivo",
+        material: "N/A - Climatizador",
+        pendencia: "Nenhuma",
+        protecao: "Protegido",
+        hardening: { torre: true, chapaAco: true, caixasSoldadas: true, entradaAC: true, quadros: true, perimetro: true },
+        pontosVulneraveis: "Jaula anti-furto instalada no AC",
+        reincidenteAno: true,
+        reincidente30d: true,
+        tipoReincidencia: "Reincidência em Outro Ponto",
+        bo: "Sim (BO-12290/26)",
+        autoConstatacao: "Sim",
+        risco: "Baixo - Site enclausurado"
+      },
+      {
+        id: "OC-2026-0005",
+        data: "2026-09-20",
+        regional: "DDD 12 - Vale do Paraíba",
+        codSite: "SJC-045",
+        nomeSite: "S. José Campos Sul",
+        osPrisma: "PRISMA-098110",
+        tipoEvento: "Furto",
+        itemAfetado: "Barras de Cobre do QDF",
+        impacto: "Indisponibilidade Parcial",
+        recuperacao: "Recuperado Definitivo",
+        material: "Alumínio",
+        pendencia: "Nenhuma",
+        protecao: "Protegido",
+        hardening: { torre: true, chapaAco: true, caixasSoldadas: true, entradaAC: true, quadros: true, perimetro: true },
+        pontosVulneraveis: "Nenhum",
+        reincidenteAno: true,
+        reincidente30d: true,
+        tipoReincidencia: "Reincidência em Outro Ponto",
+        bo: "Sim (BO-55112/26)",
+        autoConstatacao: "Sim",
+        risco: "Baixo"
+      },
+      {
+        id: "OC-2026-0006",
+        data: "2026-09-18",
+        regional: "DDD 14 - Bauru / Marília",
+        codSite: "BAU-042",
+        nomeSite: "Bauru Distrito",
+        osPrisma: "PRISMA-097544",
+        tipoEvento: "Vandalismo",
+        itemAfetado: "QDF / Disjuntores",
+        impacto: "Off-Air (Total)",
+        recuperacao: "Pendente de Recuperação",
+        material: "Pendente",
+        pendencia: "Aguardando novo disjuntor em trânsito",
+        protecao: "Vulnerável",
+        hardening: { torre: false, chapaAco: false, caixasSoldadas: false, entradaAC: false, quadros: false, perimetro: false },
+        pontosVulneraveis: "Muro avariado por queda de árvore",
+        reincidenteAno: true,
+        reincidente30d: true,
+        tipoReincidencia: "Reincidência no Mesmo Ponto",
+        bo: "Não",
+        autoConstatacao: "Não",
+        risco: "Alto - Local aberto"
+      },
+      {
+        id: "OC-2026-0007",
+        data: "2026-09-14",
+        regional: "DDD 15 - Sorocaba / Itapetininga",
+        codSite: "SOR-019",
+        nomeSite: "Sorocaba Éden",
+        osPrisma: "PRISMA-096700",
+        tipoEvento: "Furto",
+        itemAfetado: "Cabos de Cobre",
+        impacto: "Off-Air (Total)",
+        recuperacao: "Recuperado Provisório",
+        material: "Cobre",
+        pendencia: "Troca por cabo de alumínio e soldagem",
+        protecao: "Vulnerável",
+        hardening: { torre: false, chapaAco: false, caixasSoldadas: false, entradaAC: false, quadros: true, perimetro: false },
+        pontosVulneraveis: "Caixas de passagem sem concreto",
+        reincidenteAno: false,
+        reincidente30d: false,
+        tipoReincidencia: "Primeira Ocorrência",
+        bo: "Não",
+        autoConstatacao: "Sim",
+        risco: "Alto - Fácil acesso"
+      },
+      {
+        id: "OC-2026-0008",
+        data: "2026-09-11",
+        regional: "DDD 19 - Região Campinas",
+        codSite: "SUM-003",
+        nomeSite: "Sumaré Picerno",
+        osPrisma: "PRISMA-096120",
+        tipoEvento: "Furto",
+        itemAfetado: "Baterias",
+        impacto: "Sem Afetamento de Sinal",
+        recuperacao: "Recuperado Definitivo",
+        material: "Baterias novas",
+        pendencia: "Nenhuma",
+        protecao: "Protegido",
+        hardening: { torre: true, chapaAco: true, caixasSoldadas: true, entradaAC: true, quadros: true, perimetro: true },
+        pontosVulneraveis: "Armário de baterias com chave tetra e chapa de aço",
+        reincidenteAno: false,
+        reincidente30d: false,
+        tipoReincidencia: "Primeira Ocorrência",
+        bo: "Sim (BO-78810/26)",
+        autoConstatacao: "Sim",
+        risco: "Baixo"
+      },
+      {
+        id: "OC-2026-0009",
+        data: "2026-09-08",
+        regional: "DDD 16 - Ribeirão Preto",
+        codSite: "RBP-031",
+        nomeSite: "Ribeirão Campos Elíseos",
+        osPrisma: "PRISMA-095400",
+        tipoEvento: "Furto",
+        itemAfetado: "Cabos de Cobre",
+        impacto: "Indisponibilidade Parcial",
+        recuperacao: "Recuperado Definitivo",
+        material: "Alumínio",
+        pendencia: "Nenhuma",
+        protecao: "Protegido",
+        hardening: { torre: true, chapaAco: true, caixasSoldadas: true, entradaAC: true, quadros: true, perimetro: true },
+        pontosVulneraveis: "Nenhum",
+        reincidenteAno: false,
+        reincidente30d: false,
+        tipoReincidencia: "Primeira Ocorrência",
+        bo: "Sim (BO-33211/26)",
+        autoConstatacao: "Sim",
+        risco: "Baixo"
+      },
+      {
+        id: "OC-2026-0010",
+        data: "2026-09-05",
+        regional: "DDD 17 - São José do Rio Preto",
+        codSite: "SJR-014",
+        nomeSite: "Rio Preto Redentora",
+        osPrisma: "PRISMA-095110",
+        tipoEvento: "Furto",
+        itemAfetado: "Cabos de Cobre",
+        impacto: "Off-Air (Total)",
+        recuperacao: "Recuperado Provisório",
+        material: "Cobre",
+        pendencia: "Substituição por Alumínio",
+        protecao: "Parcialmente Protegido",
+        hardening: { torre: true, chapaAco: false, caixasSoldadas: true, entradaAC: false, quadros: true, perimetro: true },
+        pontosVulneraveis: "Esteira vertical descoberta",
+        reincidenteAno: true,
+        reincidente30d: true,
+        tipoReincidencia: "Reincidência no Mesmo Ponto",
+        bo: "Sim (BO-19920/26)",
+        autoConstatacao: "Sim",
+        risco: "Médio"
+      },
+      {
+        id: "OC-2026-0011",
+        data: "2026-08-30",
+        regional: "DDD 18 - Pres. Prudente / Araçatuba",
+        codSite: "PRU-005",
+        nomeSite: "Presidente Prudente Rodovia",
+        osPrisma: "PRISMA-094330",
+        tipoEvento: "Vandalismo",
+        itemAfetado: "Cerca e Portão Principal",
+        impacto: "Sem Afetamento de Sinal",
+        recuperacao: "Recuperado Definitivo",
+        material: "Aço / Concertina",
+        pendencia: "Nenhuma",
+        protecao: "Protegido",
+        hardening: { torre: true, chapaAco: true, caixasSoldadas: true, entradaAC: true, quadros: true, perimetro: true },
+        pontosVulneraveis: "Nenhum",
+        reincidenteAno: false,
+        reincidente30d: false,
+        tipoReincidencia: "Primeira Ocorrência",
+        bo: "Sim (BO-09941/26)",
+        autoConstatacao: "Sim",
+        risco: "Baixo"
+      },
+      {
+        id: "OC-2026-0012",
+        data: "2026-08-25",
+        regional: "DDD 19 - Região Campinas",
+        codSite: "IND-011",
+        nomeSite: "Indaiatuba Distrito",
+        osPrisma: "PRISMA-093880",
+        tipoEvento: "Furto",
+        itemAfetado: "Cabos de Cobre",
+        impacto: "Off-Air (Total)",
+        recuperacao: "Recuperado Provisório",
+        material: "Cobre",
+        pendencia: "Troca por Alumínio e concretagem de caixas",
+        protecao: "Vulnerável",
+        hardening: { torre: false, chapaAco: false, caixasSoldadas: false, entradaAC: false, quadros: false, perimetro: true },
+        pontosVulneraveis: "Caixas de piso sem solda",
+        reincidenteAno: true,
+        reincidente30d: false,
+        tipoReincidencia: "Reincidência no Mesmo Ponto",
+        bo: "Sim (BO-66100/26)",
+        autoConstatacao: "Sim",
+        risco: "Alto"
+      }
+    ];
+
+    // Gerar 26 dados adicionais para atingir os 38 totais representativos
+    const regionaisLista = [
+      "DDD 19 - Região Campinas", "DDD 19 - Região Piracicaba", "DDD 13 - Baixada Santista",
+      "DDD 12 - Vale do Paraíba", "DDD 14 - Bauru / Marília", "DDD 15 - Sorocaba / Itapetininga",
+      "DDD 16 - Ribeirão Preto", "DDD 17 - São José do Rio Preto", "DDD 18 - Pres. Prudente / Araçatuba"
+    ];
+
+    for (let i = 13; i <= 38; i++) {
+      const isCampinas = i % 3 === 0;
+      const reg = isCampinas ? "DDD 19 - Região Campinas" : regionaisLista[i % regionaisLista.length];
+      const isDef = i % 2 === 0;
+      const isProt = i % 3 === 0;
+      const isReinc = i % 2 !== 0;
+
+      ocorrenciasData.push({
+        id: `OC-2026-00${i}`,
+        data: `2026-0${(i%9)+1}-1${i%8}`,
+        regional: reg,
+        codSite: `SITE-${100 + i}`,
+        nomeSite: `Site Operacional ${100 + i}`,
+        osPrisma: `PRISMA-${80000 + i * 150}`,
+        tipoEvento: i % 5 === 0 ? "Vandalismo" : "Furto",
+        itemAfetado: i % 4 === 0 ? "Transformador" : (i % 2 === 0 ? "Cabos de Cobre" : "Barras de Cobre"),
+        impacto: i % 3 === 0 ? "Off-Air (Total)" : "Indisponibilidade Parcial",
+        recuperacao: isDef ? "Recuperado Definitivo" : "Recuperado Provisório",
+        material: isDef ? "Alumínio" : "Cobre",
+        pendencia: isDef ? "Nenhuma" : "Solda de tampa e troca por alumínio",
+        protecao: isProt ? "Protegido" : (i % 2 === 0 ? "Parcialmente Protegido" : "Vulnerável"),
+        hardening: {
+          torre: isProt,
+          chapaAco: isProt,
+          caixasSoldadas: isProt,
+          entradaAC: isProt,
+          quadros: true,
+          perimetro: isProt
+        },
+        pontosVulneraveis: isProt ? "Nenhum" : "Esteiramento baixo e caixas sem solda",
+        reincidenteAno: isReinc,
+        reincidente30d: i > 32,
+        tipoReincidencia: isReinc ? (i % 4 === 0 ? "Reincidência no Mesmo Ponto" : "Reincidência em Outro Ponto") : "Primeira Ocorrência",
+        bo: i === 14 || i === 22 ? "Não" : `Sim (BO-${50000+i}/26)`,
+        autoConstatacao: "Sim",
+        risco: isProt ? "Baixo" : "Médio / Alto"
+      });
+    }
+
+    let filteredData = [...ocorrenciasData];
+
+    // CHARTS INSTANCES
+    let chartRegionaisInst = null;
+    let chartRecProtInst = null;
+    let chartHardeningInst = null;
+
+    // INICIALIZAÇÃO
+    window.addEventListener('DOMContentLoaded', () => {
+      initCharts();
+      renderTable();
+      updateKPIs();
+    });
+
+    // ATUALIZAÇÃO DE GRÁFICOS
+    function initCharts() {
+      // 1. Chart Regionais (Barras)
+      const ctxReg = document.getElementById('chart-regionais').getContext('2d');
+      const countsReg = {};
+      regionaisLista.forEach(r => countsReg[r] = 0);
+      filteredData.forEach(d => {
+        if(countsReg[d.regional] !== undefined) countsReg[d.regional]++;
+        else countsReg[d.regional] = 1;
+      });
+
+      const labelsReg = Object.keys(countsReg).map(r => r.replace("DDD ", ""));
+      const dataReg = Object.values(countsReg);
+      const bgColors = Object.keys(countsReg).map(r => r.includes("Campinas") ? "#f43f5e" : "#0284c7");
+
+      chartRegionaisInst = new Chart(ctxReg, {
+        type: 'bar',
+        data: {
+          labels: labelsReg,
+          datasets: [{
+            data: dataReg,
+            backgroundColor: bgColors,
+            borderRadius: 6
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            y: { beginAtZero: true, grid: { color: '#f1f5f9' }, ticks: { stepSize: 2 } },
+            x: { grid: { display: false }, ticks: { font: { size: 9 }, maxRotation: 45, minRotation: 45 } }
+          }
+        }
+      });
+
+      // 2. Chart Recuperação vs Proteção (Doughnut duplo ou polar)
+      const ctxRecProt = document.getElementById('chart-rec-prot').getContext('2d');
+      const recDef = filteredData.filter(d => d.recuperacao === "Recuperado Definitivo").length;
+      const recProv = filteredData.filter(d => d.recuperacao === "Recuperado Provisório").length;
+      const recPend = filteredData.filter(d => d.recuperacao.includes("Pendente")).length;
+
+      const protOK = filteredData.filter(d => d.protecao === "Protegido").length;
+      const protParc = filteredData.filter(d => d.protecao === "Parcialmente Protegido").length;
+      const protVuln = filteredData.filter(d => d.protecao === "Vulnerável").length;
+
+      chartRecProtInst = new Chart(ctxRecProt, {
+        type: 'doughnut',
+        data: {
+          labels: ['Rec. Definitivo', 'Rec. Provisório', 'Rec. Pendente', 'Protegido (Blindado)', 'Parcialmente Prot.', 'Vulnerável'],
+          datasets: [
+            {
+              label: 'Recuperação',
+              data: [recDef, recProv, recPend],
+              backgroundColor: ['#10b981', '#f59e0b', '#ef4444'],
+              weight: 0.6
+            },
+            {
+              label: 'Proteção',
+              data: [protOK, protParc, protVuln],
+              backgroundColor: ['#0284c7', '#38bdf8', '#f43f5e'],
+              weight: 1
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 9 } } }
+          },
+          cutout: '45%'
+        }
+      });
+
+      // 3. Chart Hardening (Radar ou Horizontal Bar)
+      const ctxHard = document.getElementById('chart-hardening').getContext('2d');
+      const hardeningCounts = {
+        "Torre / Esteira": filteredData.filter(d => d.hardening.torre).length,
+        "Chapa de Aço": filteredData.filter(d => d.hardening.chapaAco).length,
+        "Caixas Soldadas": filteredData.filter(d => d.hardening.caixasSoldadas).length,
+        "Entrada AC": filteredData.filter(d => d.hardening.entradaAC).length,
+        "Quadros Elétricos": filteredData.filter(d => d.hardening.quadros).length,
+        "Perímetro / Muro": filteredData.filter(d => d.hardening.perimetro).length,
+      };
+
+      chartHardeningInst = new Chart(ctxHard, {
+        type: 'bar',
+        data: {
+          labels: Object.keys(hardeningCounts),
+          datasets: [{
+            data: Object.values(hardeningCounts),
+            backgroundColor: '#6366f1',
+            borderRadius: 4
+          }]
+        },
+        options: {
+          indexAxis: 'y',
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            x: { beginAtZero: true, grid: { color: '#f1f5f9' }, ticks: { stepSize: 5 } },
+            y: { grid: { display: false }, ticks: { font: { size: 10 } } }
+          }
+        }
+      });
+    }
+
+    function updateCharts() {
+      if (!chartRegionaisInst) return;
+
+      // Update Regionais Chart
+      const countsReg = {};
+      regionaisLista.forEach(r => countsReg[r] = 0);
+      filteredData.forEach(d => {
+        if(countsReg[d.regional] !== undefined) countsReg[d.regional]++;
+        else countsReg[d.regional] = 1;
+      });
+      chartRegionaisInst.data.datasets[0].data = Object.values(countsReg);
+      chartRegionaisInst.update();
+
+      // Update Rec vs Prot Chart
+      const recDef = filteredData.filter(d => d.recuperacao === "Recuperado Definitivo").length;
+      const recProv = filteredData.filter(d => d.recuperacao === "Recuperado Provisório").length;
+      const recPend = filteredData.filter(d => d.recuperacao.includes("Pendente")).length;
+      const protOK = filteredData.filter(d => d.protecao === "Protegido").length;
+      const protParc = filteredData.filter(d => d.protecao === "Parcialmente Protegido").length;
+      const protVuln = filteredData.filter(d => d.protecao === "Vulnerável").length;
+
+      chartRecProtInst.data.datasets[0].data = [recDef, recProv, recPend];
+      chartRecProtInst.data.datasets[1].data = [protOK, protParc, protVuln];
+      chartRecProtInst.update();
+
+      // Update Hardening
+      const hardeningCounts = {
+        "Torre / Esteira": filteredData.filter(d => d.hardening.torre).length,
+        "Chapa de Aço": filteredData.filter(d => d.hardening.chapaAco).length,
+        "Caixas Soldadas": filteredData.filter(d => d.hardening.caixasSoldadas).length,
+        "Entrada AC": filteredData.filter(d => d.hardening.entradaAC).length,
+        "Quadros Elétricos": filteredData.filter(d => d.hardening.quadros).length,
+        "Perímetro / Muro": filteredData.filter(d => d.hardening.perimetro).length,
+      };
+      chartHardeningInst.data.datasets[0].data = Object.values(hardeningCounts);
+      chartHardeningInst.update();
+    }
+
+    // RENDERIZAR TABELA
+    function renderTable() {
+      const tbody = document.getElementById('table-body');
+      tbody.innerHTML = '';
+
+      if (filteredData.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="9" class="p-8 text-center text-slate-400">Nenhuma ocorrência encontrada para os filtros selecionados.</td></tr>`;
+        document.getElementById('rows-count').innerText = "0 ocorrências";
+        return;
+      }
+
+      document.getElementById('rows-count').innerText = `Exibindo ${filteredData.length} ocorrências`;
+
+      filteredData.forEach(row => {
+        const tr = document.createElement('tr');
+        tr.className = "hover:bg-slate-50/80 transition border-b border-slate-100";
+
+        // Badges de recuperação
+        let recBadge = '';
+        if (row.recuperacao === 'Recuperado Definitivo') {
+          recBadge = `<span class="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200"><i class="fa-solid fa-check"></i> Definitivo</span>`;
+        } else if (row.recuperacao === 'Recuperado Provisório') {
+          recBadge = `<span class="inline-flex items-center gap-1 text-[11px] font-semibold text-amber-700 bg-amber-50 px-2 py-0.5 rounded border border-amber-200"><i class="fa-solid fa-clock"></i> Provisório</span>`;
+        } else {
+          recBadge = `<span class="inline-flex items-center gap-1 text-[11px] font-semibold text-rose-700 bg-rose-50 px-2 py-0.5 rounded border border-rose-200"><i class="fa-solid fa-xmark"></i> Pendente</span>`;
+        }
+
+        // Badges de Proteção
+        let protBadge = '';
+        if (row.protecao === 'Protegido') {
+          protBadge = `<span class="inline-flex items-center gap-1 text-[11px] font-semibold text-sky-700 bg-sky-50 px-2 py-0.5 rounded border border-sky-200"><i class="fa-solid fa-lock"></i> Protegido</span>`;
+        } else if (row.protecao === 'Parcialmente Protegido') {
+          protBadge = `<span class="inline-flex items-center gap-1 text-[11px] font-semibold text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded border border-indigo-200">Parcial</span>`;
+        } else {
+          protBadge = `<span class="inline-flex items-center gap-1 text-[11px] font-semibold text-rose-600 bg-rose-50 px-2 py-0.5 rounded border border-rose-200"><i class="fa-solid fa-unlock"></i> Vulnerável</span>`;
+        }
+
+        // Reincidência Badge
+        let reincBadge = '';
+        if (row.reincidente30d) {
+          reincBadge = `<span class="text-[10px] font-bold text-rose-600 bg-rose-100 px-1.5 py-0.5 rounded inline-block">30 Dias</span>`;
+        } else if (row.reincidenteAno) {
+          reincBadge = `<span class="text-[10px] font-medium text-amber-700 bg-amber-50 px-1.5 py-0.5 rounded inline-block">No Ano</span>`;
+        } else {
+          reincBadge = `<span class="text-[10px] text-slate-400">Primeira vez</span>`;
+        }
+
+        // BO Badge
+        const boBadge = row.bo.startsWith("Sim") 
+          ? `<span class="text-[11px] text-emerald-700 font-medium"><i class="fa-solid fa-file-circle-check"></i> OK</span>` 
+          : `<span class="text-[11px] text-rose-600 font-bold bg-rose-50 px-1 py-0.5 rounded"><i class="fa-solid fa-file-circle-xmark"></i> Pendente</span>`;
+
+        tr.innerHTML = `
+          <td class="p-3">
+            <span class="font-bold text-slate-900 block">${row.data}</span>
+            <span class="text-[10px] text-slate-400 font-mono">${row.id}</span>
+          </td>
+          <td class="p-3 font-medium text-slate-700">
+            ${row.regional}
+          </td>
+          <td class="p-3">
+            <span class="font-bold text-slate-800 block">${row.codSite} - ${row.nomeSite}</span>
+            <span class="text-[10px] font-mono text-sky-700 bg-sky-50 px-1.5 py-0.2 rounded border border-sky-100">${row.osPrisma}</span>
+          </td>
+          <td class="p-3">
+            <span class="font-medium text-slate-800">${row.itemAfetado}</span>
+            <span class="text-[10px] text-slate-400 block">${row.tipoEvento}</span>
+          </td>
+          <td class="p-3">
+            <div class="space-y-1">
+              ${recBadge}
+              <div class="text-[10px] text-slate-500">Material: <strong class="text-slate-700">${row.material}</strong></div>
+            </div>
+          </td>
+          <td class="p-3">
+            ${protBadge}
+          </td>
+          <td class="p-3">
+            <div class="space-y-0.5">
+              ${reincBadge}
+              <div class="text-[10px] text-slate-500 truncate max-w-[120px]" title="${row.tipoReincidencia}">${row.tipoReincidencia}</div>
+            </div>
+          </td>
+          <td class="p-3">
+            ${boBadge}
+          </td>
+          <td class="p-3 text-center">
+            <button onclick="openModal('${row.id}')" class="p-1.5 text-slate-500 hover:text-sky-600 hover:bg-sky-50 rounded-md transition" title="Ver Detalhes do Hardening">
+              <i class="fa-solid fa-eye text-xs"></i>
+            </button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    // ATUALIZAÇÃO DOS CARDS DE KPIS
+    function updateKPIs() {
+      document.getElementById('kpi-total').innerText = filteredData.length;
+      document.getElementById('kpi-reinc-30').innerText = filteredData.filter(d => d.reincidente30d).length;
+      document.getElementById('kpi-reinc-ano').innerText = filteredData.filter(d => d.reincidenteAno).length;
+      document.getElementById('kpi-rec-def').innerText = filteredData.filter(d => d.recuperacao === "Recuperado Definitivo").length;
+      document.getElementById('kpi-rec-prov').innerText = `${filteredData.filter(d => d.recuperacao === "Recuperado Provisório").length} prov.`;
+      document.getElementById('kpi-protegidos').innerText = filteredData.filter(d => d.protecao === "Protegido").length;
+      document.getElementById('kpi-vulneraveis').innerText = `${filteredData.filter(d => d.protecao === "Vulnerável").length} vuln.`;
+      
+      const boCount = filteredData.filter(d => d.bo.startsWith("Sim")).length;
+      document.getElementById('kpi-bo-abertos').innerText = boCount;
+      const boPercent = filteredData.length > 0 ? ((boCount / filteredData.length) * 100).toFixed(1) : 0;
+      document.getElementById('kpi-bo-percent').innerText = `${boPercent}%`;
+    }
+
+    // FILTROS
+    function applyFilters() {
+      const regVal = document.getElementById('filter-regional').value;
+      const recVal = document.getElementById('filter-recuperacao').value;
+      const protVal = document.getElementById('filter-protecao').value;
+      const searchVal = document.getElementById('search-input').value.toLowerCase().trim();
+
+      filteredData = ocorrenciasData.filter(item => {
+        const matchReg = regVal === "ALL" || item.regional === regVal;
+        const matchRec = recVal === "ALL" || item.recuperacao === recVal;
+        const matchProt = protVal === "ALL" || item.protecao === protVal;
+        const matchSearch = searchVal === "" || 
+          item.codSite.toLowerCase().includes(searchVal) ||
+          item.nomeSite.toLowerCase().includes(searchVal) ||
+          item.osPrisma.toLowerCase().includes(searchVal) ||
+          item.itemAfetado.toLowerCase().includes(searchVal);
+
+        return matchReg && matchRec && matchProt && matchSearch;
+      });
+
+      renderTable();
+      updateKPIs();
+      updateCharts();
+    }
+
+    function resetFilters() {
+      document.getElementById('filter-regional').value = "ALL";
+      document.getElementById('filter-recuperacao').value = "ALL";
+      document.getElementById('filter-protecao').value = "ALL";
+      document.getElementById('search-input').value = "";
+      applyFilters();
+    }
+
+    function filterTopOffenders() {
+      document.getElementById('search-input').value = "CPS-001";
+      applyFilters();
+    }
+
+    function filterSemBO() {
+      filteredData = ocorrenciasData.filter(d => d.bo === "Não");
+      renderTable();
+      updateKPIs();
+      updateCharts();
+    }
+
+    // MODAL DE DETALHES
+    function openModal(id) {
+      const item = ocorrenciasData.find(d => d.id === id);
+      if (!item) return;
+
+      document.getElementById('modal-site-title').innerText = `${item.codSite} - ${item.nomeSite}`;
+      document.getElementById('modal-site-subtitle').innerText = `O.S. PRISMA: ${item.osPrisma} • ID: ${item.id}`;
+      document.getElementById('m-data').innerText = item.data;
+      document.getElementById('m-regional').innerText = item.regional;
+      document.getElementById('m-impacto').innerText = item.impacto;
+      document.getElementById('m-bo').innerText = item.bo;
+
+      document.getElementById('m-rec-status').innerText = item.recuperacao;
+      document.getElementById('m-rec-material').innerText = item.material;
+      document.getElementById('m-rec-pendencias').innerText = item.pendencia;
+
+      document.getElementById('m-vulneraveis').innerText = item.pontosVulneraveis;
+      document.getElementById('m-risco-texto').innerText = item.risco;
+
+      // Render Checklist
+      const checkContainer = document.getElementById('modal-hardening-checklist');
+      const checks = [
+        { label: "Proteção Torre / Esteiramento", val: item.hardening.torre },
+        { label: "Blindagem com Chapa de Aço", val: item.hardening.chapaAco },
+        { label: "Caixas Passagem Soldadas / Concretadas", val: item.hardening.caixasSoldadas },
+        { label: "Proteção Entrada Energia / AC", val: item.hardening.entradaAC },
+        { label: "Enclausuramento Quadros Elétricos", val: item.hardening.quadros },
+        { label: "Fechamento e Reforço Perímetro", val: item.hardening.perimetro }
+      ];
+
+      checkContainer.innerHTML = checks.map(c => `
+        <div class="flex items-center space-x-2 p-1.5 rounded ${c.val ? 'bg-emerald-50 text-emerald-800' : 'bg-rose-50 text-rose-800'}">
+          <i class="fa-solid ${c.val ? 'fa-check text-emerald-600' : 'fa-xmark text-rose-500'}"></i>
+          <span>${c.label}</span>
+        </div>
+      `).join('');
+
+      document.getElementById('detail-modal').classList.remove('hidden');
+    }
+
+    function closeModal() {
+      document.getElementById('detail-modal').classList.add('hidden');
+    }
+
+    // EXPORTAR CSV
+    function exportCSV() {
+      let csv = "ID;Data;Regional;CodSite;NomeSite;OS_PRISMA;TipoEvento;ItemAfetado;Impacto;Recuperacao;Material;Protecao;Reincidente30d;BO\n";
+      filteredData.forEach(r => {
+        csv += `${r.id};${r.data};"${r.regional}";${r.codSite};"${r.nomeSite}";${r.osPrisma};${r.tipoEvento};"${r.itemAfetado}";"${r.impacto}";"${r.recuperacao}";"${r.material}";"${r.protecao}";${r.reincidente30d ? 'SIM':'NAO'};"${r.bo}"\n`;
+      });
+      const blob = new Blob(["\uFEFF" + csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.setAttribute("href", url);
+      link.setAttribute("download", `Controle_Furto_Vandalismo_${new Date().toISOString().slice(0,10)}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+  </script>
+</body>
+</html>
