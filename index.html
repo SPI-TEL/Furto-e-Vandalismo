@@ -225,10 +225,8 @@
       </div>
     </section>
 
-    <!-- CHARTS SECTION: GRÁFICOS GERENCIAIS -->
+    <!-- CHARTS SECTION -->
     <section class="grid grid-cols-1 lg:grid-cols-3 gap-5">
-      
-      <!-- Chart 1: Ocorrências por Regional -->
       <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between">
         <div class="flex items-center justify-between mb-2">
           <div>
@@ -246,7 +244,6 @@
         </div>
       </div>
 
-      <!-- Chart 2: Recuperação vs Proteção -->
       <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between">
         <div class="flex items-center justify-between mb-2">
           <div>
@@ -264,7 +261,6 @@
         </div>
       </div>
 
-      <!-- Chart 3: Ações de Hardening Implementadas -->
       <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between">
         <div class="flex items-center justify-between mb-2">
           <div>
@@ -281,13 +277,10 @@
           <p>Controle de intervenções físicas executadas</p>
         </div>
       </div>
-
     </section>
 
-    <!-- SECTION: RANKING DE SITES OFENSORES & PAINEL DE RISCO -->
+    <!-- RANKING DE SITES OFENSORES -->
     <section class="grid grid-cols-1 lg:grid-cols-3 gap-5">
-      
-      <!-- Top Sites Ofensores -->
       <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col">
         <div class="flex items-center justify-between pb-3 border-b border-slate-100">
           <div>
@@ -304,7 +297,6 @@
         </div>
       </div>
 
-      <!-- Checklist para Reunião de Supervisão -->
       <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col lg:col-span-2">
         <div class="flex items-center justify-between pb-3 border-b border-slate-100">
           <div>
@@ -356,10 +348,9 @@
           <button onclick="filterSemBO()" class="text-[11px] font-bold text-rose-700 underline hover:text-rose-900">Filtrar sem BO</button>
         </div>
       </div>
-
     </section>
 
-    <!-- SECTION: TABELA TRANSACIONAL -->
+    <!-- TABELA TRANSACIONAL -->
     <section class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
       <div class="p-4 border-b border-slate-100 flex flex-wrap items-center justify-between gap-4">
         <div>
@@ -477,25 +468,28 @@
     </div>
   </div>
 
-  <!-- JAVASCRIPT: CONEXÃO COM GOOGLE SHEETS E PROCESSAMENTO -->
+  <!-- JAVASCRIPT CORRIGIDO -->
   <script>
-    // URL DO CSV PUBLICADO DA PLANILHA GOOGLE
     const GOOGLE_SHEETS_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT9vnTCjlHu1HZPX-sgt29TsDb5A-qY8uj0iWZoeTBHaqb8uMLmbX12WpTALmfHutcVw0G8T68MBfTX/pub?gid=222993592&single=true&output=csv';
 
     let rawData = [];
     let ocorrenciasData = [];
     let filteredData = [];
 
-    // CHARTS
     let chartRegionaisInst = null;
     let chartRecProtInst = null;
     let chartHardeningInst = null;
+
+    // Função Auxiliar para remover acentos e converter para caixa baixa (evita erros em buscas)
+    function cleanStr(str) {
+      if (!str) return '';
+      return str.toString().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
+    }
 
     window.addEventListener('DOMContentLoaded', () => {
       fetchGoogleSheetsData();
     });
 
-    // LEITURA DO CSV VIA PAPAPARSE
     function fetchGoogleSheetsData() {
       const bannerText = document.getElementById('loading-text');
       bannerText.innerText = "Conectando à Planilha Google e baixando dados...";
@@ -527,13 +521,11 @@
       document.getElementById('loading-text').innerHTML = `<strong>Atenção:</strong> ${msg}`;
     }
 
-    // TRATAMENTO E NORMALIZAÇÃO DOS DADOS DA PLANILHA
     function processData(rows) {
       ocorrenciasData = rows.map((r, index) => {
-        // Mapeamento dinâmico buscando chaves por inclusão de nome
         const getVal = (possibleKeys) => {
           for (let key of Object.keys(r)) {
-            if (possibleKeys.some(k => key.toLowerCase().includes(k.toLowerCase()))) {
+            if (possibleKeys.some(k => cleanStr(key).includes(cleanStr(k)))) {
               return r[key] ? r[key].trim() : '';
             }
           }
@@ -550,26 +542,26 @@
         const itemAfetado = getVal(['Item Furtado', 'Item']) || 'Geral';
         const impacto = getVal(['Impacto Operacional', 'Impacto']) || 'Não informado';
         
-        const recuperacao = getVal(['Status Recuperação', 'Recuperação', 'Status Rec']) || 'Pendente de Recuperacao';
+        const recuperacao = getVal(['Status Recuperação', 'Recuperação', 'Status Rec']) || 'Pendente de Recuperação';
         const material = getVal(['Material Utilizado', 'Material']) || 'N/A';
         const pendencia = getVal(['Pendências', 'Pendencia']) || 'Nenhuma';
         
-        const protecao = getVal(['Status Proteção', 'Hardening', 'Proteção']) || 'Vulneravel';
+        const protecao = getVal(['Status Proteção', 'Hardening', 'Proteção']) || 'Vulnerável';
         
         const boVal = getVal(['BO Realizado', 'Boletim', 'BO']) || 'Não';
         const numBo = getVal(['Nº Boletim', 'Numero BO']) || '';
-        const boStr = boVal.toLowerCase().includes('sim') ? `Sim (${numBo || 'OK'})` : 'Não';
+        const boStr = cleanStr(boVal).includes('sim') ? `Sim (${numBo || 'OK'})` : 'Não';
 
-        const reinc30 = getVal(['Reincidente 30', '30 Dias']).toLowerCase().includes('sim');
-        const reincAno = getVal(['Reincidente no Ano', 'Ano']).toLowerCase().includes('sim') || reinc30;
+        const reinc30 = cleanStr(getVal(['Reincidente 30', '30 Dias'])).includes('sim');
+        const reincAno = cleanStr(getVal(['Reincidente no Ano', 'Ano'])).includes('sim') || reinc30;
         const tipoReinc = getVal(['Tipo de Reincidência', 'Tipo Reincidencia']) || (reincAno ? 'Reincidência' : 'Primeira Ocorrência');
 
-        const protTorre = getVal(['Torre', 'Esteiramento']).toLowerCase().includes('sim');
-        const protChapa = getVal(['Chapa', 'Aço']).toLowerCase().includes('sim');
-        const protSolda = getVal(['Soldada', 'Concretada']).toLowerCase().includes('sim');
-        const protAC = getVal(['Entrada Energia', 'AC']).toLowerCase().includes('sim');
-        const protQuadros = getVal(['Quadros']).toLowerCase().includes('sim');
-        const protPerimetro = getVal(['Perímetro', 'Muro']).toLowerCase().includes('sim');
+        const protTorre = cleanStr(getVal(['Torre', 'Esteiramento'])).includes('sim');
+        const protChapa = cleanStr(getVal(['Chapa', 'Aço'])).includes('sim');
+        const protSolda = cleanStr(getVal(['Soldada', 'Concretada'])).includes('sim');
+        const protAC = cleanStr(getVal(['Entrada Energia', 'AC'])).includes('sim');
+        const protQuadros = cleanStr(getVal(['Quadros'])).includes('sim');
+        const protPerimetro = cleanStr(getVal(['Perímetro', 'Muro'])).includes('sim');
 
         const vulneraveis = getVal(['Vulneráveis', 'Vulneraveis']) || 'Nenhum ponto registrado';
         const risco = getVal(['Risco', 'Justificativa']) || 'Em avaliação';
@@ -609,7 +601,6 @@
       });
     }
 
-    // RENDERIZAR TABELA TRANSACIONAL
     function renderTable() {
       const tbody = document.getElementById('table-body');
       tbody.innerHTML = '';
@@ -626,19 +617,21 @@
         const tr = document.createElement('tr');
         tr.className = "hover:bg-slate-50/80 transition border-b border-slate-100";
 
+        const recClean = cleanStr(row.recuperacao);
         let recBadge = '';
-        if (row.recuperacao.toLowerCase().includes('definitiv')) {
+        if (recClean.includes('definitiv')) {
           recBadge = `<span class="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200"><i class="fa-solid fa-check"></i> Definitivo</span>`;
-        } else if (row.recuperacao.toLowerCase().includes('provisor')) {
+        } else if (recClean.includes('provisor')) {
           recBadge = `<span class="inline-flex items-center gap-1 text-[11px] font-semibold text-amber-700 bg-amber-50 px-2 py-0.5 rounded border border-amber-200"><i class="fa-solid fa-clock"></i> Provisório</span>`;
         } else {
           recBadge = `<span class="inline-flex items-center gap-1 text-[11px] font-semibold text-rose-700 bg-rose-50 px-2 py-0.5 rounded border border-rose-200"><i class="fa-solid fa-xmark"></i> Pendente</span>`;
         }
 
+        const protClean = cleanStr(row.protecao);
         let protBadge = '';
-        if (row.protecao.toLowerCase().includes('protegido') && !row.protecao.toLowerCase().includes('parcial')) {
-          protBadge = `<span class="inline-flex items-center gap-1 text-[11px] font-semibold text-sky-700 bg-sky-50 px-2 py-0.5 rounded border border-sky-200"><i class="fa-solid fa-lock"></i> Protegido</span>`;
-        } else if (row.protecao.toLowerCase().includes('parcial')) {
+        if (protClean.includes('protegido') && !protClean.includes('parcial')) {
+          protBadge = `<span class="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200"><i class="fa-solid fa-lock"></i> Protegido</span>`;
+        } else if (protClean.includes('parcial')) {
           protBadge = `<span class="inline-flex items-center gap-1 text-[11px] font-semibold text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded border border-indigo-200">Parcial</span>`;
         } else {
           protBadge = `<span class="inline-flex items-center gap-1 text-[11px] font-semibold text-rose-600 bg-rose-50 px-2 py-0.5 rounded border border-rose-200"><i class="fa-solid fa-unlock"></i> Vulnerável</span>`;
@@ -690,7 +683,6 @@
       });
     }
 
-    // ATUALIZAÇÃO DOS KPIS
     function updateKPIs() {
       const total = filteredData.length;
       document.getElementById('kpi-total').innerText = total;
@@ -702,13 +694,13 @@
       document.getElementById('kpi-reinc-ano').innerText = reincAno;
       document.getElementById('kpi-reinc-perc').innerText = total > 0 ? `${((reincAno/total)*100).toFixed(1)}%` : '0%';
 
-      const recDef = filteredData.filter(d => d.recuperacao.toLowerCase().includes('definitiv')).length;
-      const recProv = filteredData.filter(d => d.recuperacao.toLowerCase().includes('provisor')).length;
+      const recDef = filteredData.filter(d => cleanStr(d.recuperacao).includes('definitiv')).length;
+      const recProv = filteredData.filter(d => cleanStr(d.recuperacao).includes('provisor')).length;
       document.getElementById('kpi-rec-def').innerText = recDef;
       document.getElementById('kpi-rec-prov').innerText = `${recProv} prov.`;
 
-      const protOK = filteredData.filter(d => d.protecao.toLowerCase().includes('protegido') && !d.protecao.toLowerCase().includes('parcial')).length;
-      const protVuln = filteredData.filter(d => d.protecao.toLowerCase().includes('vulnera')).length;
+      const protOK = filteredData.filter(d => cleanStr(d.protecao).includes('protegido') && !cleanStr(d.protecao).includes('parcial')).length;
+      const protVuln = filteredData.filter(d => cleanStr(d.protecao).includes('vulnera')).length;
       document.getElementById('kpi-protegidos').innerText = protOK;
       document.getElementById('kpi-vulneraveis').innerText = `${protVuln} vuln.`;
 
@@ -716,7 +708,6 @@
       document.getElementById('kpi-bo-abertos').innerText = boCount;
       document.getElementById('kpi-bo-percent').innerText = total > 0 ? `${((boCount/total)*100).toFixed(1)}%` : '0%';
 
-      // Atualiza banner de alerta de BO
       const semBoCount = total - boCount;
       const boAlert = document.getElementById('bo-alert-text');
       if(semBoCount > 0) {
@@ -726,7 +717,6 @@
       }
     }
 
-    // TOP SITES OFENSORES
     function renderTopOffenders() {
       const counts = {};
       ocorrenciasData.forEach(d => {
@@ -757,9 +747,7 @@
       });
     }
 
-    // INICIALIZAR GRÁFICOS CHART.JS
     function initOrUpdateCharts() {
-      // 1. Chart Regionais
       const regCounts = {};
       filteredData.forEach(d => {
         regCounts[d.regional] = (regCounts[d.regional] || 0) + 1;
@@ -784,11 +772,10 @@
         });
       }
 
-      // 2. Chart Rec vs Prot
-      const recDef = filteredData.filter(d => d.recuperacao.toLowerCase().includes('definitiv')).length;
-      const recProv = filteredData.filter(d => d.recuperacao.toLowerCase().includes('provisor')).length;
-      const protOK = filteredData.filter(d => d.protecao.toLowerCase().includes('protegido') && !d.protecao.toLowerCase().includes('parcial')).length;
-      const protVuln = filteredData.filter(d => d.protecao.toLowerCase().includes('vulnera')).length;
+      const recDef = filteredData.filter(d => cleanStr(d.recuperacao).includes('definitiv')).length;
+      const recProv = filteredData.filter(d => cleanStr(d.recuperacao).includes('provisor')).length;
+      const protOK = filteredData.filter(d => cleanStr(d.protecao).includes('protegido') && !cleanStr(d.protecao).includes('parcial')).length;
+      const protVuln = filteredData.filter(d => cleanStr(d.protecao).includes('vulnera')).length;
 
       if (chartRecProtInst) {
         chartRecProtInst.data.datasets[0].data = [recDef, recProv];
@@ -802,14 +789,13 @@
             labels: ['Rec. Definitivo', 'Rec. Provisório', 'Protegido', 'Vulnerável'],
             datasets: [
               { data: [recDef, recProv], backgroundColor: ['#10b981', '#f59e0b'] },
-              { data: [protOK, protVuln], backgroundColor: ['#0284c7', '#f43f5e'] }
+              { data: [protOK, protVuln], backgroundColor: ['#10b981', '#f43f5e'] }
             ]
           },
           options: { responsive: true, maintainAspectRatio: false, cutout: '50%' }
         });
       }
 
-      // 3. Chart Hardening
       const hCounts = {
         "Torre": filteredData.filter(d => d.hardening.torre).length,
         "Chapa Aço": filteredData.filter(d => d.hardening.chapaAco).length,
@@ -835,22 +821,21 @@
       }
     }
 
-    // FILTROS DA PÁGINA
     function applyFilters() {
       const regVal = document.getElementById('filter-regional').value;
-      const recVal = document.getElementById('filter-recuperacao').value;
-      const protVal = document.getElementById('filter-protecao').value;
-      const searchVal = document.getElementById('search-input').value.toLowerCase().trim();
+      const recVal = cleanStr(document.getElementById('filter-recuperacao').value);
+      const protVal = cleanStr(document.getElementById('filter-protecao').value);
+      const searchVal = cleanStr(document.getElementById('search-input').value);
 
       filteredData = ocorrenciasData.filter(item => {
         const matchReg = regVal === "ALL" || item.regional === regVal;
-        const matchRec = recVal === "ALL" || item.recuperacao.toLowerCase().includes(recVal.toLowerCase());
-        const matchProt = protVal === "ALL" || item.protecao.toLowerCase().includes(protVal.toLowerCase());
+        const matchRec = recVal === "all" || cleanStr(item.recuperacao).includes(recVal);
+        const matchProt = protVal === "all" || cleanStr(item.protecao).includes(protVal);
         const matchSearch = searchVal === "" || 
-          item.codSite.toLowerCase().includes(searchVal) ||
-          item.nomeSite.toLowerCase().includes(searchVal) ||
-          item.osPrisma.toLowerCase().includes(searchVal) ||
-          item.itemAfetado.toLowerCase().includes(searchVal);
+          cleanStr(item.codSite).includes(searchVal) ||
+          cleanStr(item.nomeSite).includes(searchVal) ||
+          cleanStr(item.osPrisma).includes(searchVal) ||
+          cleanStr(item.itemAfetado).includes(searchVal);
 
         return matchReg && matchRec && matchProt && matchSearch;
       });
@@ -875,7 +860,6 @@
       initOrUpdateCharts();
     }
 
-    // MODAL DETALHES
     function openModal(id) {
       const item = ocorrenciasData.find(d => d.id === id);
       if (!item) return;
@@ -918,7 +902,6 @@
       document.getElementById('detail-modal').classList.add('hidden');
     }
 
-    // EXPORTAR CSV
     function exportCSV() {
       let csv = "ID;Data;Regional;CodSite;NomeSite;OS_PRISMA;TipoEvento;ItemAfetado;Impacto;Recuperacao;Material;Protecao;BO\n";
       filteredData.forEach(r => {
