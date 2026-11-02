@@ -175,11 +175,9 @@
       </div>
     </section>
 
-    <!-- CONTROL BAR & FILTERS ATUALIZADO COM OS NOVOS FILTROS -->
+    <!-- CONTROL BAR & FILTERS -->
     <section class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-sm">
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 items-end">
-        
-        <!-- 1. Regional Filter -->
         <div>
           <label class="block text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-1">Regional / DDD</label>
           <select id="filter-regional" onchange="applyFilters()" class="w-full text-xs bg-slate-50 border border-slate-300 rounded-lg p-2 font-medium text-slate-700 focus:ring-2 focus:ring-sky-500 focus:outline-none">
@@ -187,7 +185,6 @@
           </select>
         </div>
 
-        <!-- 2. Recuperação Filter -->
         <div>
           <label class="block text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-1">Status Recuperação</label>
           <select id="filter-recuperacao" onchange="applyFilters()" class="w-full text-xs bg-slate-50 border border-slate-300 rounded-lg p-2 font-medium text-slate-700 focus:ring-2 focus:ring-sky-500 focus:outline-none">
@@ -198,7 +195,6 @@
           </select>
         </div>
 
-        <!-- 3. Proteção Filter -->
         <div>
           <label class="block text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-1">Status de Proteção</label>
           <select id="filter-protecao" onchange="applyFilters()" class="w-full text-xs bg-slate-50 border border-slate-300 rounded-lg p-2 font-medium text-slate-700 focus:ring-2 focus:ring-sky-500 focus:outline-none">
@@ -209,7 +205,6 @@
           </select>
         </div>
 
-        <!-- 4. NOVO FILTRO: AÇÕES DE HARDENING -->
         <div>
           <label class="block text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-1">Ações Hardening</label>
           <select id="filter-hardening-action" onchange="applyFilters()" class="w-full text-xs bg-slate-50 border border-slate-300 rounded-lg p-2 font-medium text-slate-700 focus:ring-2 focus:ring-sky-500 focus:outline-none">
@@ -223,17 +218,14 @@
           </select>
         </div>
 
-        <!-- 5. NOVO FILTRO: ITEM FURTADO / VANDALIZADO -->
         <div>
           <label class="block text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-1">Item Furtado / Vandalizado</label>
           <select id="filter-item" onchange="applyFilters()" class="w-full text-xs bg-slate-50 border border-slate-300 rounded-lg p-2 font-medium text-slate-700 focus:ring-2 focus:ring-sky-500 focus:outline-none">
             <option value="ALL">Todos os Itens</option>
           </select>
         </div>
-
       </div>
 
-      <!-- Barra de Pesquisa de Texto -->
       <div class="mt-3 pt-3 border-t border-slate-100 flex items-center justify-between gap-3">
         <div class="relative flex-1 max-w-md">
           <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-slate-400 text-xs"></i>
@@ -245,17 +237,42 @@
       </div>
     </section>
 
-    <!-- LINHA 1 DE GRÁFICOS: REGIONAIS, STATUS RECUPERAÇÃO E HARDENING -->
+    <!-- NOVO GRÁFICO: EVOLUTIVO TEMPORAL DE ENTRANTES (ORDENS DE SERVIÇO) -->
+    <section class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+      <div class="flex flex-wrap items-center justify-between gap-3 pb-2 border-b border-slate-100 mb-2">
+        <div>
+          <h2 class="text-xs font-bold uppercase tracking-wider text-slate-800 flex items-center gap-1.5">
+            <i class="fa-solid fa-chart-line text-cyan-600"></i> Evolutivo Temporal de Entrantes (Criação de OS)
+          </h2>
+          <p class="text-[10px] text-slate-400">Curva de abertura e entrada de Ordens de Serviço</p>
+        </div>
+        
+        <!-- Toggle Mensal / Diário -->
+        <div class="flex items-center bg-slate-100 p-0.5 rounded-lg border border-slate-200">
+          <button id="btn-period-mensal" onclick="setTimelinePeriod('mensal')" class="px-3 py-1 text-xs font-semibold rounded-md bg-blue-600 text-white shadow-xs transition">
+            Mensal
+          </button>
+          <button id="btn-period-diario" onclick="setTimelinePeriod('diario')" class="px-3 py-1 text-xs font-medium rounded-md text-slate-600 hover:text-slate-900 transition">
+            Diário
+          </button>
+        </div>
+      </div>
+      <div class="h-60 relative w-full">
+        <canvas id="chart-timeline"></canvas>
+      </div>
+    </section>
+
+    <!-- LINHA 1 DE GRÁFICOS: REGIONAIS (DECRESCENTE), STATUS RECUPERAÇÃO E HARDENING (DECRESCENTE) -->
     <section class="grid grid-cols-1 lg:grid-cols-3 gap-4">
       
-      <!-- 1. Ocorrências por Regional (Sem escala esquerda, sem número preto duplicado) -->
+      <!-- 1. Ocorrências por Regional (Decrescente + Destaque Ofensor) -->
       <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between">
         <div class="flex items-center justify-between mb-1">
           <div>
             <h2 class="text-xs font-bold uppercase tracking-wider text-slate-700 flex items-center gap-1.5">
               <i class="fa-solid fa-chart-column text-sky-600"></i> Ocorrências por Regional (DDDs)
             </h2>
-            <p class="text-[10px] text-slate-400">Identificação da Regional Ofensora</p>
+            <p class="text-[10px] text-slate-400">Ordenado por volume • Destaque Ofensor</p>
           </div>
         </div>
         <div class="h-64 relative">
@@ -284,14 +301,14 @@
         </div>
       </div>
 
-      <!-- 3. Ações de Hardening Executadas (Sem escala inferior, esticado até o final) -->
+      <!-- 3. Ações de Hardening Executadas (Decrescente + Destaque Ofensor) -->
       <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between">
         <div class="flex items-center justify-between mb-1">
           <div>
             <h2 class="text-xs font-bold uppercase tracking-wider text-slate-700 flex items-center gap-1.5">
               <i class="fa-solid fa-shield-virus text-indigo-600"></i> Ações de Hardening Executadas
             </h2>
-            <p class="text-[10px] text-slate-400">Medidas anti-reincidência instaladas</p>
+            <p class="text-[10px] text-slate-400">Ordenado por volume • Destaque Principal</p>
           </div>
         </div>
         <div class="h-72 relative">
@@ -305,7 +322,6 @@
 
     <!-- LINHA 2: TOP SITES OFENSORES E TOP 10 ITENS AFETADOS -->
     <section class="grid grid-cols-1 lg:grid-cols-3 gap-4">
-      <!-- TOP SITES OFENSORES -->
       <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-sm flex flex-col">
         <div class="flex items-center justify-between pb-2 border-b border-slate-100">
           <div>
@@ -322,7 +338,6 @@
         </div>
       </div>
 
-      <!-- TOP 10 ITENS AFETADOS -->
       <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-sm flex flex-col lg:col-span-2">
         <div class="flex items-center justify-between pb-2 border-b border-slate-100">
           <div>
@@ -518,6 +533,9 @@
     let chartRecProtInst = null;
     let chartHardeningInst = null;
     let chartTopItensInst = null;
+    let chartTimelineInst = null;
+
+    let timelineGranularity = 'mensal'; // 'mensal' ou 'diario'
 
     function cleanStr(str) {
       if (!str) return '';
@@ -527,6 +545,21 @@
     window.addEventListener('DOMContentLoaded', () => {
       fetchGoogleSheetsData();
     });
+
+    function setTimelinePeriod(period) {
+      timelineGranularity = period;
+      const btnM = document.getElementById('btn-period-mensal');
+      const btnD = document.getElementById('btn-period-diario');
+
+      if (period === 'mensal') {
+        btnM.className = "px-3 py-1 text-xs font-semibold rounded-md bg-blue-600 text-white shadow-xs transition";
+        btnD.className = "px-3 py-1 text-xs font-medium rounded-md text-slate-600 hover:text-slate-900 transition";
+      } else {
+        btnD.className = "px-3 py-1 text-xs font-semibold rounded-md bg-blue-600 text-white shadow-xs transition";
+        btnM.className = "px-3 py-1 text-xs font-medium rounded-md text-slate-600 hover:text-slate-900 transition";
+      }
+      initOrUpdateCharts();
+    }
 
     function fetchGoogleSheetsData() {
       const bannerText = document.getElementById('loading-text');
@@ -571,7 +604,7 @@
         };
 
         const id = getVal(['ID Ocorrência', 'ID', 'Ocorrência']) || `OC-2026-${String(index+1).padStart(4, '0')}`;
-        const data = getVal(['Data Ocorrência', 'Data']) || 'N/I';
+        const dataStr = getVal(['Data Ocorrência', 'Data']) || '';
         const regional = getVal(['Regional / DDD', 'Regional', 'DDD']) || 'Outro';
         const codSite = getVal(['Sigla do Site', 'Código do Site', 'Cod Site', 'Site']) || 'N/A';
         const nomeSite = getVal(['Nome do Site', 'Nome Site']) || codSite;
@@ -581,7 +614,6 @@
         const itemAfetado = getVal(['Itens Vandalizados', 'Item Vandalizado', 'Item Furtado', 'Item']) || 'Não especificado';
         const impacto = getVal(['Impacto Operacional', 'Impacto']) || 'Não informado';
         
-        // Status Recuperação
         const rawRec = getVal(['Status Recuperação', 'Recuperação', 'Status Rec']);
         let recuperacao = 'Pendente de Recuperação';
         if (cleanStr(rawRec).includes('definitiv')) {
@@ -593,7 +625,6 @@
         const material = getVal(['Material Utilizado', 'Material']) || 'N/A';
         const pendencia = getVal(['Pendências', 'Pendencia']) || 'Nenhuma';
         
-        // Status de Proteção
         const rawProt = getVal(['Status Proteção', 'Hardening', 'Proteção']);
         let protecao = 'Vulnerável';
         if (cleanStr(rawProt).includes('parcial')) {
@@ -602,7 +633,6 @@
           protecao = 'Protegido';
         }
         
-        // Validação BO
         const boVal = getVal(['BO Realizado?', 'BO Realizado', 'Boletim Realizado', 'BO']);
         const numBo = getVal(['Nº Boletim Ocorrência', 'Nº Boletim', 'Numero BO', 'Num BO']);
         const hasBO = cleanStr(boVal).includes('sim') || (numBo !== '' && numBo !== '0' && !cleanStr(numBo).includes('nao') && !cleanStr(numBo).includes('n/a'));
@@ -622,8 +652,22 @@
         const vulneraveis = getVal(['Vulneráveis', 'Vulneraveis']) || 'Nenhum ponto registrado';
         const risco = getVal(['Risco', 'Justificativa']) || 'Em avaliação';
 
+        // Parsing padronizado de Data
+        let parsedDate = null;
+        if (dataStr) {
+          const parts = dataStr.split(/[\/\-]/);
+          if (parts.length === 3) {
+            // Suporta DD/MM/YYYY ou YYYY/MM/DD
+            if (parts[0].length === 4) {
+              parsedDate = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
+            } else {
+              parsedDate = new Date(parseInt(parts[2]), parseInt(parts[1]) - 1, parseInt(parts[0]));
+            }
+          }
+        }
+
         return {
-          id, data, regional, codSite, nomeSite, osPrisma, tipoEvento, itemAfetado,
+          id, data: dataStr || 'N/I', parsedDate, regional, codSite, nomeSite, osPrisma, tipoEvento, itemAfetado,
           impacto, recuperacao, material, pendencia, protecao,
           hardening: { torre: protTorre, chapaAco: protChapa, caixasSoldadas: protSolda, entradaAC: protAC, quadros: protQuadros, perimetro: protPerimetro },
           pontosVulneraveis: vulneraveis,
@@ -646,7 +690,6 @@
     }
 
     function populateFilterSelects() {
-      // 1. Filtro Regional
       const regSelect = document.getElementById('filter-regional');
       const regionais = [...new Set(ocorrenciasData.map(d => d.regional))].filter(Boolean);
       regSelect.innerHTML = '<option value="ALL">Todas</option>';
@@ -657,7 +700,6 @@
         regSelect.appendChild(opt);
       });
 
-      // 2. Filtro Item Furtado / Vandalizado
       const itemSelect = document.getElementById('filter-item');
       const itens = [...new Set(ocorrenciasData.map(d => d.itemAfetado))].filter(Boolean).sort();
       itemSelect.innerHTML = '<option value="ALL">Todos os Itens</option>';
@@ -823,21 +865,118 @@
     function initOrUpdateCharts() {
       const totalGeral = filteredData.length;
 
-      // 1. OCORRÊNCIAS POR REGIONAL (DDDs)
-      // Ajuste: Removido datalabels padrão (para não gerar número preto no meio)
-      // Ajuste: Eixo Y ocultado (display: false) para tirar a escala do lado esquerdo
+      // 0. GRÁFICO EVOLUTIVO TEMPORAL (ENTRANTES / CRIAÇÃO DE OS)
+      const dateMap = {};
+      filteredData.forEach(d => {
+        if (d.parsedDate && !isNaN(d.parsedDate)) {
+          let key = '';
+          const y = d.parsedDate.getFullYear();
+          const m = String(d.parsedDate.getMonth() + 1).padStart(2, '0');
+          const day = String(d.parsedDate.getDate()).padStart(2, '0');
+
+          if (timelineGranularity === 'mensal') {
+            key = `${m}/${y}`;
+          } else {
+            key = `${day}/${m}/${y}`;
+          }
+          dateMap[key] = (dateMap[key] || 0) + 1;
+        }
+      });
+
+      // Ordenar chaves cronologicamente
+      const sortedTimeKeys = Object.keys(dateMap).sort((a, b) => {
+        const parseKey = (k) => {
+          const p = k.split('/');
+          return p.length === 2 ? new Date(p[1], p[0]-1, 1) : new Date(p[2], p[1]-1, p[0]);
+        };
+        return parseKey(a) - parseKey(b);
+      });
+
+      const timelineValues = sortedTimeKeys.map(k => dateMap[k]);
+
+      if (chartTimelineInst) {
+        chartTimelineInst.data.labels = sortedTimeKeys;
+        chartTimelineInst.data.datasets[0].data = timelineValues;
+        chartTimelineInst.update();
+      } else {
+        const ctxTimeline = document.getElementById('chart-timeline').getContext('2d');
+        
+        // Gradiente azul-ciano conforme imagem 2
+        const grad = ctxTimeline.createLinearGradient(0, 0, 0, 240);
+        grad.addColorStop(0, 'rgba(6, 182, 212, 0.35)');
+        grad.addColorStop(1, 'rgba(6, 182, 212, 0.02)');
+
+        chartTimelineInst = new Chart(ctxTimeline, {
+          type: 'line',
+          data: {
+            labels: sortedTimeKeys,
+            datasets: [{
+              label: 'Entrantes',
+              data: timelineValues,
+              borderColor: '#0891b2',
+              backgroundColor: grad,
+              borderWidth: 2.5,
+              fill: true,
+              tension: 0.35,
+              pointBackgroundColor: '#0891b2',
+              pointBorderColor: '#ffffff',
+              pointBorderWidth: 2,
+              pointRadius: 4,
+              pointHoverRadius: 6
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: { mode: 'index', intersect: false },
+            plugins: {
+              legend: { display: false },
+              datalabels: { display: false },
+              tooltip: {
+                backgroundColor: '#1e293b',
+                titleColor: '#f8fafc',
+                bodyColor: '#38bdf8',
+                bodyFont: { weight: 'bold' },
+                padding: 10,
+                callbacks: {
+                  label: (ctx) => ` Entrantes: ${ctx.parsed.y} ordens`
+                }
+              }
+            },
+            scales: {
+              x: {
+                grid: { color: '#f1f5f9' },
+                ticks: { font: { size: 10 } }
+              },
+              y: {
+                beginAtZero: true,
+                grid: { color: '#f1f5f9' },
+                ticks: { stepSize: 50, font: { size: 10 } }
+              }
+            }
+          }
+        });
+      }
+
+      // 1. OCORRÊNCIAS POR REGIONAL (DDDs) - ORDEM DECRESCENTE + DESTAQUE DO OFENSOR
       const regCounts = {};
       filteredData.forEach(d => {
         regCounts[d.regional] = (regCounts[d.regional] || 0) + 1;
       });
 
-      const labelsReg = Object.keys(regCounts);
-      const dataReg = Object.values(regCounts);
+      // Ordenar decrescente
+      const sortedRegs = Object.entries(regCounts).sort((a, b) => b[1] - a[1]);
+      const labelsReg = sortedRegs.map(i => i[0]);
+      const dataReg = sortedRegs.map(i => i[1]);
       const maxReg = Math.max(...dataReg, 0);
+
+      // Cores: O primeiro (maior ofensor) em destaque vermelho/rose, os demais em azul
+      const bgColorsReg = dataReg.map((val, idx) => idx === 0 && val > 0 ? '#e11d48' : '#0284c7');
 
       if (chartRegionaisInst) {
         chartRegionaisInst.data.labels = labelsReg;
         chartRegionaisInst.data.datasets[0].data = dataReg;
+        chartRegionaisInst.data.datasets[0].backgroundColor = bgColorsReg;
         chartRegionaisInst.options.scales.y.suggestedMax = maxReg + (maxReg * 0.35 || 2);
         chartRegionaisInst.update();
       } else {
@@ -846,7 +985,7 @@
           type: 'bar',
           data: {
             labels: labelsReg,
-            datasets: [{ data: dataReg, backgroundColor: '#0284c7', borderRadius: 4 }]
+            datasets: [{ data: dataReg, backgroundColor: bgColorsReg, borderRadius: 4 }]
           },
           options: {
             responsive: true,
@@ -854,7 +993,7 @@
             layout: { padding: { top: 22, left: 5, right: 5 } },
             plugins: {
               legend: { display: false },
-              datalabels: { display: false } // Desativa o plugin default para evitar número escuro no centro
+              datalabels: { display: false }
             },
             scales: {
               x: {
@@ -862,7 +1001,7 @@
                 ticks: { font: { size: 10 } }
               },
               y: {
-                display: false, // Tira a escala do lado esquerdo
+                display: false,
                 beginAtZero: true,
                 suggestedMax: maxReg + (maxReg * 0.35 || 2)
               }
@@ -882,11 +1021,11 @@
                   ctx.textAlign = 'center';
                   
                   // % NA EXTREMIDADE EXTERNA (Topo)
-                  ctx.fillStyle = '#0f172a';
+                  ctx.fillStyle = index === 0 ? '#e11d48' : '#0f172a';
                   ctx.font = 'bold 11px Inter, sans-serif';
                   ctx.fillText(pct, bar.x, bar.y - 6);
 
-                  // QTDE NA BASE INTERNA (Branco nítido na base da coluna)
+                  // QTDE NA BASE INTERNA
                   ctx.fillStyle = '#ffffff';
                   ctx.font = 'bold 11px Inter, sans-serif';
                   ctx.fillText(val, bar.x, bar.base - 8);
@@ -986,10 +1125,8 @@
         });
       }
 
-      // 3. AÇÕES DE HARDENING EXECUTADAS (Barras Horizontais)
-      // Ajuste: Retirada a escala de baixo (eixo X display: false)
-      // Ajuste: Esticado até o final com preenchimento da área
-      const hCounts = {
+      // 3. AÇÕES DE HARDENING EXECUTADAS - ORDEM DECRESCENTE + DESTAQUE DO OFENSOR/PRINCIPAL
+      const rawHardeningCounts = {
         "Torre": filteredData.filter(d => d.hardening.torre).length,
         "Chapa Aço": filteredData.filter(d => d.hardening.chapaAco).length,
         "Caixa Soldada": filteredData.filter(d => d.hardening.caixasSoldadas).length,
@@ -998,12 +1135,20 @@
         "Perímetro": filteredData.filter(d => d.hardening.perimetro).length,
       };
 
-      const hValues = Object.values(hCounts);
-      const totalH = hValues.reduce((a, b) => a + b, 0);
-      const maxH = Math.max(...hValues, 0);
+      // Ordenar decrescente
+      const sortedH = Object.entries(rawHardeningCounts).sort((a, b) => b[1] - a[1]);
+      const labelsHard = sortedH.map(i => i[0]);
+      const dataHard = sortedH.map(i => i[1]);
+      const totalH = dataHard.reduce((a, b) => a + b, 0);
+      const maxH = Math.max(...dataHard, 0);
+
+      // Cores: Primeiro em destaque violeta forte (#4f46e5) e demais em índigo suave (#818cf8)
+      const bgColorsHard = dataHard.map((val, idx) => idx === 0 && val > 0 ? '#4f46e5' : '#818cf8');
 
       if (chartHardeningInst) {
-        chartHardeningInst.data.datasets[0].data = hValues;
+        chartHardeningInst.data.labels = labelsHard;
+        chartHardeningInst.data.datasets[0].data = dataHard;
+        chartHardeningInst.data.datasets[0].backgroundColor = bgColorsHard;
         chartHardeningInst.options.scales.x.suggestedMax = maxH + (maxH * 0.35 || 2);
         chartHardeningInst.update();
       } else {
@@ -1011,8 +1156,8 @@
         chartHardeningInst = new Chart(ctxHard, {
           type: 'bar',
           data: {
-            labels: Object.keys(hCounts),
-            datasets: [{ data: hValues, backgroundColor: '#6366f1', borderRadius: 4, barThickness: 18 }]
+            labels: labelsHard,
+            datasets: [{ data: dataHard, backgroundColor: bgColorsHard, borderRadius: 4, barThickness: 18 }]
           },
           options: {
             indexAxis: 'y',
@@ -1025,7 +1170,7 @@
             },
             scales: {
               x: {
-                display: false, // Retira a escala de baixo
+                display: false,
                 beginAtZero: true,
                 suggestedMax: maxH + (maxH * 0.35 || 2)
               },
@@ -1050,7 +1195,7 @@
 
                   // % NA EXTREMIDADE EXTERNA
                   ctx.textAlign = 'left';
-                  ctx.fillStyle = '#1e293b';
+                  ctx.fillStyle = index === 0 ? '#4f46e5' : '#1e293b';
                   ctx.font = 'bold 10.5px Inter, sans-serif';
                   ctx.fillText(pct, bar.x + 6, bar.y);
 
@@ -1176,16 +1321,13 @@
         const matchRec = recVal === "all" || cleanStr(item.recuperacao).includes(recVal);
         const matchProt = protVal === "all" || cleanStr(item.protecao).includes(protVal);
         
-        // Filtro por Ação de Hardening
         let matchHard = true;
         if (hardVal !== "ALL") {
           matchHard = item.hardening && item.hardening[hardVal] === true;
         }
 
-        // Filtro por Item Furtado/Vandalizado
         const matchItem = itemVal === "all" || cleanStr(item.itemAfetado) === itemVal;
 
-        // Busca textual
         const matchSearch = searchVal === "" || 
           cleanStr(item.codSite).includes(searchVal) ||
           cleanStr(item.nomeSite).includes(searchVal) ||
