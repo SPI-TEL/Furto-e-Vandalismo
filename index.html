@@ -175,21 +175,22 @@
       </div>
     </section>
 
-    <!-- CONTROL BAR & FILTERS -->
-    <section class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-sm flex flex-wrap items-center justify-between gap-3">
-      <div class="flex flex-wrap items-center gap-3 flex-1 min-w-[280px]">
-        <!-- Regional Filter -->
-        <div class="w-full sm:w-auto">
-          <label class="block text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-1">Filtrar Regional / DDD</label>
-          <select id="filter-regional" onchange="applyFilters()" class="w-full sm:w-44 text-xs bg-slate-50 border border-slate-300 rounded-lg p-2 font-medium text-slate-700 focus:ring-2 focus:ring-sky-500 focus:outline-none">
+    <!-- CONTROL BAR & FILTERS ATUALIZADO COM OS NOVOS FILTROS -->
+    <section class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-sm">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 items-end">
+        
+        <!-- 1. Regional Filter -->
+        <div>
+          <label class="block text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-1">Regional / DDD</label>
+          <select id="filter-regional" onchange="applyFilters()" class="w-full text-xs bg-slate-50 border border-slate-300 rounded-lg p-2 font-medium text-slate-700 focus:ring-2 focus:ring-sky-500 focus:outline-none">
             <option value="ALL">Todas</option>
           </select>
         </div>
 
-        <!-- Recuperação Filter -->
-        <div class="w-full sm:w-auto">
+        <!-- 2. Recuperação Filter -->
+        <div>
           <label class="block text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-1">Status Recuperação</label>
-          <select id="filter-recuperacao" onchange="applyFilters()" class="w-full sm:w-44 text-xs bg-slate-50 border border-slate-300 rounded-lg p-2 font-medium text-slate-700 focus:ring-2 focus:ring-sky-500 focus:outline-none">
+          <select id="filter-recuperacao" onchange="applyFilters()" class="w-full text-xs bg-slate-50 border border-slate-300 rounded-lg p-2 font-medium text-slate-700 focus:ring-2 focus:ring-sky-500 focus:outline-none">
             <option value="ALL">Todos os Status</option>
             <option value="Recuperado Definitivo">Recuperado Definitivo</option>
             <option value="Recuperado Provisório">Recuperado Provisório</option>
@@ -197,31 +198,57 @@
           </select>
         </div>
 
-        <!-- Proteção Filter -->
-        <div class="w-full sm:w-auto">
+        <!-- 3. Proteção Filter -->
+        <div>
           <label class="block text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-1">Status de Proteção</label>
-          <select id="filter-protecao" onchange="applyFilters()" class="w-full sm:w-44 text-xs bg-slate-50 border border-slate-300 rounded-lg p-2 font-medium text-slate-700 focus:ring-2 focus:ring-sky-500 focus:outline-none">
+          <select id="filter-protecao" onchange="applyFilters()" class="w-full text-xs bg-slate-50 border border-slate-300 rounded-lg p-2 font-medium text-slate-700 focus:ring-2 focus:ring-sky-500 focus:outline-none">
             <option value="ALL">Todas as Condições</option>
             <option value="Protegido">Protegido</option>
             <option value="Parcialmente Protegido">Parcialmente Protegido</option>
             <option value="Vulnerável">Vulnerável</option>
           </select>
         </div>
+
+        <!-- 4. NOVO FILTRO: AÇÕES DE HARDENING -->
+        <div>
+          <label class="block text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-1">Ações Hardening</label>
+          <select id="filter-hardening-action" onchange="applyFilters()" class="w-full text-xs bg-slate-50 border border-slate-300 rounded-lg p-2 font-medium text-slate-700 focus:ring-2 focus:ring-sky-500 focus:outline-none">
+            <option value="ALL">Todas as Ações</option>
+            <option value="torre">Torre / Esteiramento</option>
+            <option value="chapaAco">Blindagem Chapa de Aço</option>
+            <option value="caixasSoldadas">Caixas Soldadas</option>
+            <option value="entradaAC">Proteção Entrada AC</option>
+            <option value="quadros">Quadros Elétricos</option>
+            <option value="perimetro">Fechamento Perímetro</option>
+          </select>
+        </div>
+
+        <!-- 5. NOVO FILTRO: ITEM FURTADO / VANDALIZADO -->
+        <div>
+          <label class="block text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-1">Item Furtado / Vandalizado</label>
+          <select id="filter-item" onchange="applyFilters()" class="w-full text-xs bg-slate-50 border border-slate-300 rounded-lg p-2 font-medium text-slate-700 focus:ring-2 focus:ring-sky-500 focus:outline-none">
+            <option value="ALL">Todos os Itens</option>
+          </select>
+        </div>
+
       </div>
 
-      <!-- Search Input -->
-      <div class="w-full lg:w-72">
-        <label class="block text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-1">Busca Site / O.S. PRISMA</label>
-        <div class="relative">
+      <!-- Barra de Pesquisa de Texto -->
+      <div class="mt-3 pt-3 border-t border-slate-100 flex items-center justify-between gap-3">
+        <div class="relative flex-1 max-w-md">
           <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-slate-400 text-xs"></i>
-          <input type="text" id="search-input" onkeyup="applyFilters()" placeholder="Ex: CPS-001 ou PRISMA..." class="w-full pl-8 pr-3 py-1.5 text-xs bg-slate-50 border border-slate-300 rounded-lg text-slate-700 focus:ring-2 focus:ring-sky-500 focus:outline-none">
+          <input type="text" id="search-input" onkeyup="applyFilters()" placeholder="Busca Site / O.S. PRISMA..." class="w-full pl-8 pr-3 py-1.5 text-xs bg-slate-50 border border-slate-300 rounded-lg text-slate-700 focus:ring-2 focus:ring-sky-500 focus:outline-none">
         </div>
+        <button onclick="resetFilters()" class="text-xs text-slate-600 hover:text-sky-600 px-3 py-1.5 border border-slate-200 rounded-lg hover:bg-slate-50 transition shrink-0 font-medium">
+          Limpar Filtros
+        </button>
       </div>
     </section>
 
     <!-- LINHA 1 DE GRÁFICOS: REGIONAIS, STATUS RECUPERAÇÃO E HARDENING -->
     <section class="grid grid-cols-1 lg:grid-cols-3 gap-4">
-      <!-- 1. Ocorrências por Regional -->
+      
+      <!-- 1. Ocorrências por Regional (Sem escala esquerda, sem número preto duplicado) -->
       <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between">
         <div class="flex items-center justify-between mb-1">
           <div>
@@ -257,7 +284,7 @@
         </div>
       </div>
 
-      <!-- 3. Ações de Hardening Executadas -->
+      <!-- 3. Ações de Hardening Executadas (Sem escala inferior, esticado até o final) -->
       <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between">
         <div class="flex items-center justify-between mb-1">
           <div>
@@ -267,7 +294,7 @@
             <p class="text-[10px] text-slate-400">Medidas anti-reincidência instaladas</p>
           </div>
         </div>
-        <div class="h-64 relative">
+        <div class="h-72 relative">
           <canvas id="chart-hardening"></canvas>
         </div>
         <div class="pt-2 text-[10px] text-slate-500 text-center border-t border-slate-100">
@@ -276,9 +303,9 @@
       </div>
     </section>
 
-    <!-- LINHA 2: TOP SITES OFENSORES (ABAIXO DE REGIONAL) E TOP 10 ITENS AFETADOS NA MESMA LINHA -->
+    <!-- LINHA 2: TOP SITES OFENSORES E TOP 10 ITENS AFETADOS -->
     <section class="grid grid-cols-1 lg:grid-cols-3 gap-4">
-      <!-- TOP SITES OFENSORES (1 Coluna) -->
+      <!-- TOP SITES OFENSORES -->
       <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-sm flex flex-col">
         <div class="flex items-center justify-between pb-2 border-b border-slate-100">
           <div>
@@ -295,7 +322,7 @@
         </div>
       </div>
 
-      <!-- TOP 10 ITENS AFETADOS (2 Colunas) -->
+      <!-- TOP 10 ITENS AFETADOS -->
       <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-sm flex flex-col lg:col-span-2">
         <div class="flex items-center justify-between pb-2 border-b border-slate-100">
           <div>
@@ -312,7 +339,7 @@
       </div>
     </section>
 
-    <!-- ROTEIRO DE TRATATIVA SEMANAL COMPACTO (ALTURA REDUZIDA PELA METADE) -->
+    <!-- ROTEIRO DE TRATATIVA SEMANAL COMPACTO -->
     <section class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-sm">
       <div class="flex items-center justify-between pb-2 border-b border-slate-100 mb-2.5">
         <div>
@@ -377,9 +404,6 @@
 
         <div class="flex items-center gap-2">
           <span class="text-xs text-slate-500" id="rows-count">Exibindo 0 ocorrências</span>
-          <button onclick="resetFilters()" class="text-xs text-slate-600 hover:text-sky-600 px-2 py-1 border border-slate-200 rounded hover:bg-slate-50 transition">
-            Limpar Filtros
-          </button>
         </div>
       </div>
 
@@ -484,9 +508,6 @@
 
   <!-- JAVASCRIPT -->
   <script>
-    // Registrar Datalabels Globalmente
-    Chart.register(ChartDataLabels);
-
     const GOOGLE_SHEETS_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT9vnTCjlHu1HZPX-sgt29TsDb5A-qY8uj0iWZoeTBHaqb8uMLmbX12WpTALmfHutcVw0G8T68MBfTX/pub?gid=222993592&single=true&output=csv';
 
     let rawData = [];
@@ -615,7 +636,7 @@
         };
       });
 
-      populateRegionalFilter();
+      populateFilterSelects();
       filteredData = [...ocorrenciasData];
       
       initOrUpdateCharts();
@@ -624,16 +645,27 @@
       renderTopOffenders();
     }
 
-    function populateRegionalFilter() {
-      const select = document.getElementById('filter-regional');
+    function populateFilterSelects() {
+      // 1. Filtro Regional
+      const regSelect = document.getElementById('filter-regional');
       const regionais = [...new Set(ocorrenciasData.map(d => d.regional))].filter(Boolean);
-      
-      select.innerHTML = '<option value="ALL">Todas</option>';
+      regSelect.innerHTML = '<option value="ALL">Todas</option>';
       regionais.forEach(r => {
         const opt = document.createElement('option');
         opt.value = r;
         opt.innerText = r;
-        select.appendChild(opt);
+        regSelect.appendChild(opt);
+      });
+
+      // 2. Filtro Item Furtado / Vandalizado
+      const itemSelect = document.getElementById('filter-item');
+      const itens = [...new Set(ocorrenciasData.map(d => d.itemAfetado))].filter(Boolean).sort();
+      itemSelect.innerHTML = '<option value="ALL">Todos os Itens</option>';
+      itens.forEach(it => {
+        const opt = document.createElement('option');
+        opt.value = it;
+        opt.innerText = it.length > 45 ? it.substring(0, 42) + '...' : it;
+        itemSelect.appendChild(opt);
       });
     }
 
@@ -792,7 +824,8 @@
       const totalGeral = filteredData.length;
 
       // 1. OCORRÊNCIAS POR REGIONAL (DDDs)
-      // % NA EXTREMIDADE EXTERNA (end / top) e QTDE NA BASE INTERNA (start / top)
+      // Ajuste: Removido datalabels padrão (para não gerar número preto no meio)
+      // Ajuste: Eixo Y ocultado (display: false) para tirar a escala do lado esquerdo
       const regCounts = {};
       filteredData.forEach(d => {
         regCounts[d.regional] = (regCounts[d.regional] || 0) + 1;
@@ -805,7 +838,7 @@
       if (chartRegionaisInst) {
         chartRegionaisInst.data.labels = labelsReg;
         chartRegionaisInst.data.datasets[0].data = dataReg;
-        chartRegionaisInst.options.scales.y.suggestedMax = maxReg + (maxReg * 0.3 || 1);
+        chartRegionaisInst.options.scales.y.suggestedMax = maxReg + (maxReg * 0.35 || 2);
         chartRegionaisInst.update();
       } else {
         const ctxReg = document.getElementById('chart-regionais').getContext('2d');
@@ -818,25 +851,24 @@
           options: {
             responsive: true,
             maintainAspectRatio: false,
-            layout: { padding: { top: 20 } },
+            layout: { padding: { top: 22, left: 5, right: 5 } },
             plugins: {
               legend: { display: false },
-              datalabels: {
-                formatter: function(value) {
-                  return value;
-                }
-              }
+              datalabels: { display: false } // Desativa o plugin default para evitar número escuro no centro
             },
             scales: {
+              x: {
+                grid: { display: false },
+                ticks: { font: { size: 10 } }
+              },
               y: {
+                display: false, // Tira a escala do lado esquerdo
                 beginAtZero: true,
-                suggestedMax: maxReg + 1,
-                ticks: { stepSize: 1, precision: 0 }
+                suggestedMax: maxReg + (maxReg * 0.35 || 2)
               }
             }
           },
           plugins: [{
-            // Plugin para desenhar: % na ponta externa e Qtde na base interna
             afterDatasetsDraw(chart) {
               const { ctx } = chart;
               chart.data.datasets.forEach((dataset, i) => {
@@ -854,7 +886,7 @@
                   ctx.font = 'bold 11px Inter, sans-serif';
                   ctx.fillText(pct, bar.x, bar.y - 6);
 
-                  // QTDE NA BASE INTERNA (Dentro da barra)
+                  // QTDE NA BASE INTERNA (Branco nítido na base da coluna)
                   ctx.fillStyle = '#ffffff';
                   ctx.font = 'bold 11px Inter, sans-serif';
                   ctx.fillText(val, bar.x, bar.base - 8);
@@ -868,7 +900,6 @@
       }
 
       // 2. STATUS DE RECUPERAÇÃO (Doughnut)
-      // % NA EXTREMIDADE EXTERNA e QTDE NA BASE INTERNA
       const recDef = filteredData.filter(d => cleanStr(d.recuperacao).includes('definitiv')).length;
       const recProv = filteredData.filter(d => cleanStr(d.recuperacao).includes('provisor')).length;
       const recPend = filteredData.filter(d => !cleanStr(d.recuperacao).includes('definitiv') && !cleanStr(d.recuperacao).includes('provisor')).length;
@@ -900,9 +931,7 @@
             layout: { padding: 15 },
             plugins: {
               legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 10 } } },
-              datalabels: {
-                display: false // Usamos o plugin personalizado abaixo para separar externa (%) e interna (qtde)
-              },
+              datalabels: { display: false },
               tooltip: {
                 callbacks: {
                   label: function(context) {
@@ -928,7 +957,7 @@
                   const { startAngle, endAngle, outerRadius, innerRadius, x, y } = element;
                   const midAngle = startAngle + (endAngle - startAngle) / 2;
 
-                  // 1. QTDE NA BASE INTERNA (Centro da fatia)
+                  // QTDE NA BASE INTERNA
                   const midRadius = (innerRadius + outerRadius) / 2;
                   const posXInt = x + Math.cos(midAngle) * midRadius;
                   const posYInt = y + Math.sin(midAngle) * midRadius;
@@ -940,7 +969,7 @@
                   ctx.textBaseline = 'middle';
                   ctx.fillText(val, posXInt, posYInt);
 
-                  // 2. % NA EXTREMIDADE EXTERNA
+                  // % NA EXTREMIDADE EXTERNA
                   const outRadius = outerRadius + 14;
                   const posXExt = x + Math.cos(midAngle) * outRadius;
                   const posYExt = y + Math.sin(midAngle) * outRadius;
@@ -958,7 +987,8 @@
       }
 
       // 3. AÇÕES DE HARDENING EXECUTADAS (Barras Horizontais)
-      // % NA EXTREMIDADE EXTERNA (Right) e QTDE NA BASE INTERNA (Left)
+      // Ajuste: Retirada a escala de baixo (eixo X display: false)
+      // Ajuste: Esticado até o final com preenchimento da área
       const hCounts = {
         "Torre": filteredData.filter(d => d.hardening.torre).length,
         "Chapa Aço": filteredData.filter(d => d.hardening.chapaAco).length,
@@ -974,7 +1004,7 @@
 
       if (chartHardeningInst) {
         chartHardeningInst.data.datasets[0].data = hValues;
-        chartHardeningInst.options.scales.x.suggestedMax = maxH + (maxH * 0.25 || 1);
+        chartHardeningInst.options.scales.x.suggestedMax = maxH + (maxH * 0.35 || 2);
         chartHardeningInst.update();
       } else {
         const ctxHard = document.getElementById('chart-hardening').getContext('2d');
@@ -982,22 +1012,26 @@
           type: 'bar',
           data: {
             labels: Object.keys(hCounts),
-            datasets: [{ data: hValues, backgroundColor: '#6366f1', borderRadius: 4 }]
+            datasets: [{ data: hValues, backgroundColor: '#6366f1', borderRadius: 4, barThickness: 18 }]
           },
           options: {
             indexAxis: 'y',
             responsive: true,
             maintainAspectRatio: false,
-            layout: { padding: { right: 35 } },
+            layout: { padding: { right: 48, top: 4, bottom: 4 } },
             plugins: {
               legend: { display: false },
               datalabels: { display: false }
             },
             scales: {
               x: {
+                display: false, // Retira a escala de baixo
                 beginAtZero: true,
-                suggestedMax: maxH + 1,
-                ticks: { stepSize: 1, precision: 0 }
+                suggestedMax: maxH + (maxH * 0.35 || 2)
+              },
+              y: {
+                grid: { display: false },
+                ticks: { font: { size: 11, weight: '500' } }
               }
             }
           },
@@ -1017,13 +1051,13 @@
                   // % NA EXTREMIDADE EXTERNA
                   ctx.textAlign = 'left';
                   ctx.fillStyle = '#1e293b';
-                  ctx.font = 'bold 10px Inter, sans-serif';
-                  ctx.fillText(pct, bar.x + 5, bar.y);
+                  ctx.font = 'bold 10.5px Inter, sans-serif';
+                  ctx.fillText(pct, bar.x + 6, bar.y);
 
                   // QTDE NA BASE INTERNA
                   ctx.textAlign = 'left';
                   ctx.fillStyle = '#ffffff';
-                  ctx.font = 'bold 10px Inter, sans-serif';
+                  ctx.font = 'bold 11px Inter, sans-serif';
                   ctx.fillText(val, bar.base + 6, bar.y);
 
                   ctx.restore();
@@ -1035,7 +1069,6 @@
       }
 
       // 4. TOP 10 ITENS MAIS AFETADOS (Barras Horizontais)
-      // % NA EXTREMIDADE EXTERNA (Right) e QTDE NA BASE INTERNA (Left)
       const itemCounts = {};
       filteredData.forEach(d => {
         let itm = d.itemAfetado ? d.itemAfetado.trim() : 'Não especificado';
@@ -1134,19 +1167,32 @@
       const regVal = document.getElementById('filter-regional').value;
       const recVal = cleanStr(document.getElementById('filter-recuperacao').value);
       const protVal = cleanStr(document.getElementById('filter-protecao').value);
+      const hardVal = document.getElementById('filter-hardening-action').value;
+      const itemVal = cleanStr(document.getElementById('filter-item').value);
       const searchVal = cleanStr(document.getElementById('search-input').value);
 
       filteredData = ocorrenciasData.filter(item => {
         const matchReg = regVal === "ALL" || item.regional === regVal;
         const matchRec = recVal === "all" || cleanStr(item.recuperacao).includes(recVal);
         const matchProt = protVal === "all" || cleanStr(item.protecao).includes(protVal);
+        
+        // Filtro por Ação de Hardening
+        let matchHard = true;
+        if (hardVal !== "ALL") {
+          matchHard = item.hardening && item.hardening[hardVal] === true;
+        }
+
+        // Filtro por Item Furtado/Vandalizado
+        const matchItem = itemVal === "all" || cleanStr(item.itemAfetado) === itemVal;
+
+        // Busca textual
         const matchSearch = searchVal === "" || 
           cleanStr(item.codSite).includes(searchVal) ||
           cleanStr(item.nomeSite).includes(searchVal) ||
           cleanStr(item.osPrisma).includes(searchVal) ||
           cleanStr(item.itemAfetado).includes(searchVal);
 
-        return matchReg && matchRec && matchProt && matchSearch;
+        return matchReg && matchRec && matchProt && matchHard && matchItem && matchSearch;
       });
 
       renderTable();
@@ -1159,6 +1205,8 @@
       document.getElementById('filter-regional').value = "ALL";
       document.getElementById('filter-recuperacao').value = "ALL";
       document.getElementById('filter-protecao').value = "ALL";
+      document.getElementById('filter-hardening-action').value = "ALL";
+      document.getElementById('filter-item').value = "ALL";
       document.getElementById('search-input').value = "";
       applyFilters();
     }
