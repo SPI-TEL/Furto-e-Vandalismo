@@ -237,34 +237,8 @@
       </div>
     </section>
 
-    <!-- NOVO GRÁFICO: EVOLUTIVO TEMPORAL DE ENTRANTES (ORDENS DE SERVIÇO) -->
-    <section class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-      <div class="flex flex-wrap items-center justify-between gap-3 pb-2 border-b border-slate-100 mb-2">
-        <div>
-          <h2 class="text-xs font-bold uppercase tracking-wider text-slate-800 flex items-center gap-1.5">
-            <i class="fa-solid fa-chart-line text-cyan-600"></i> Evolutivo Temporal de Entrantes (Criação de OS)
-          </h2>
-          <p class="text-[10px] text-slate-400">Curva de abertura e entrada de Ordens de Serviço</p>
-        </div>
-        
-        <!-- Toggle Mensal / Diário -->
-        <div class="flex items-center bg-slate-100 p-0.5 rounded-lg border border-slate-200">
-          <button id="btn-period-mensal" onclick="setTimelinePeriod('mensal')" class="px-3 py-1 text-xs font-semibold rounded-md bg-blue-600 text-white shadow-xs transition">
-            Mensal
-          </button>
-          <button id="btn-period-diario" onclick="setTimelinePeriod('diario')" class="px-3 py-1 text-xs font-medium rounded-md text-slate-600 hover:text-slate-900 transition">
-            Diário
-          </button>
-        </div>
-      </div>
-      <div class="h-60 relative w-full">
-        <canvas id="chart-timeline"></canvas>
-      </div>
-    </section>
-
-    <!-- LINHA 1 DE GRÁFICOS: REGIONAIS (DECRESCENTE), STATUS RECUPERAÇÃO E HARDENING (DECRESCENTE) -->
+    <!-- LINHA 1 DE GRÁFICOS: REGIONAIS, STATUS RECUPERAÇÃO E HARDENING -->
     <section class="grid grid-cols-1 lg:grid-cols-3 gap-4">
-      
       <!-- 1. Ocorrências por Regional (Decrescente + Destaque Ofensor) -->
       <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between">
         <div class="flex items-center justify-between mb-1">
@@ -301,7 +275,7 @@
         </div>
       </div>
 
-      <!-- 3. Ações de Hardening Executadas (Decrescente + Destaque Ofensor) -->
+      <!-- 3. Ações de Hardening Executadas (Decrescente + Destaque Principal) -->
       <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between">
         <div class="flex items-center justify-between mb-1">
           <div>
@@ -354,7 +328,32 @@
       </div>
     </section>
 
-    <!-- ROTEIRO DE TRATATIVA SEMANAL COMPACTO -->
+    <!-- GRÁFICO EVOLUTIVO TEMPORAL (POSICIONADO DIRETAMENTE ACIMA DO ROTEIRO) -->
+    <section class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+      <div class="flex flex-wrap items-center justify-between gap-3 pb-2 border-b border-slate-100 mb-2">
+        <div>
+          <h2 class="text-xs font-bold uppercase tracking-wider text-slate-800 flex items-center gap-1.5">
+            <i class="fa-solid fa-chart-line text-cyan-600"></i> Evolutivo Temporal de Entrantes (Criação de OS)
+          </h2>
+          <p class="text-[10px] text-slate-400">Curva de abertura e entrada de Ordens de Serviço</p>
+        </div>
+        
+        <!-- Toggle Mensal / Diário -->
+        <div class="flex items-center bg-slate-100 p-0.5 rounded-lg border border-slate-200">
+          <button id="btn-period-mensal" onclick="setTimelinePeriod('mensal')" class="px-3 py-1 text-xs font-semibold rounded-md bg-blue-600 text-white shadow-xs transition">
+            Mensal
+          </button>
+          <button id="btn-period-diario" onclick="setTimelinePeriod('diario')" class="px-3 py-1 text-xs font-medium rounded-md text-slate-600 hover:text-slate-900 transition">
+            Diário
+          </button>
+        </div>
+      </div>
+      <div class="h-60 relative w-full">
+        <canvas id="chart-timeline"></canvas>
+      </div>
+    </section>
+
+    <!-- ROTEIRO DE TRATATIVA SEMANAL COMPACTO (POSICIONADO ABAIXO DO EVOLUTIVO) -->
     <section class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-sm">
       <div class="flex items-center justify-between pb-2 border-b border-slate-100 mb-2.5">
         <div>
@@ -535,7 +534,7 @@
     let chartTopItensInst = null;
     let chartTimelineInst = null;
 
-    let timelineGranularity = 'mensal'; // 'mensal' ou 'diario'
+    let timelineGranularity = 'mensal';
 
     function cleanStr(str) {
       if (!str) return '';
@@ -652,12 +651,10 @@
         const vulneraveis = getVal(['Vulneráveis', 'Vulneraveis']) || 'Nenhum ponto registrado';
         const risco = getVal(['Risco', 'Justificativa']) || 'Em avaliação';
 
-        // Parsing padronizado de Data
         let parsedDate = null;
         if (dataStr) {
           const parts = dataStr.split(/[\/\-]/);
           if (parts.length === 3) {
-            // Suporta DD/MM/YYYY ou YYYY/MM/DD
             if (parts[0].length === 4) {
               parsedDate = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
             } else {
@@ -865,7 +862,7 @@
     function initOrUpdateCharts() {
       const totalGeral = filteredData.length;
 
-      // 0. GRÁFICO EVOLUTIVO TEMPORAL (ENTRANTES / CRIAÇÃO DE OS)
+      // 0. GRÁFICO EVOLUTIVO TEMPORAL
       const dateMap = {};
       filteredData.forEach(d => {
         if (d.parsedDate && !isNaN(d.parsedDate)) {
@@ -883,7 +880,6 @@
         }
       });
 
-      // Ordenar chaves cronologicamente
       const sortedTimeKeys = Object.keys(dateMap).sort((a, b) => {
         const parseKey = (k) => {
           const p = k.split('/');
@@ -900,8 +896,6 @@
         chartTimelineInst.update();
       } else {
         const ctxTimeline = document.getElementById('chart-timeline').getContext('2d');
-        
-        // Gradiente azul-ciano conforme imagem 2
         const grad = ctxTimeline.createLinearGradient(0, 0, 0, 240);
         grad.addColorStop(0, 'rgba(6, 182, 212, 0.35)');
         grad.addColorStop(1, 'rgba(6, 182, 212, 0.02)');
@@ -958,19 +952,16 @@
         });
       }
 
-      // 1. OCORRÊNCIAS POR REGIONAL (DDDs) - ORDEM DECRESCENTE + DESTAQUE DO OFENSOR
+      // 1. OCORRÊNCIAS POR REGIONAL (DDDs)
       const regCounts = {};
       filteredData.forEach(d => {
         regCounts[d.regional] = (regCounts[d.regional] || 0) + 1;
       });
 
-      // Ordenar decrescente
       const sortedRegs = Object.entries(regCounts).sort((a, b) => b[1] - a[1]);
       const labelsReg = sortedRegs.map(i => i[0]);
       const dataReg = sortedRegs.map(i => i[1]);
       const maxReg = Math.max(...dataReg, 0);
-
-      // Cores: O primeiro (maior ofensor) em destaque vermelho/rose, os demais em azul
       const bgColorsReg = dataReg.map((val, idx) => idx === 0 && val > 0 ? '#e11d48' : '#0284c7');
 
       if (chartRegionaisInst) {
@@ -1020,12 +1011,10 @@
                   ctx.save();
                   ctx.textAlign = 'center';
                   
-                  // % NA EXTREMIDADE EXTERNA (Topo)
                   ctx.fillStyle = index === 0 ? '#e11d48' : '#0f172a';
                   ctx.font = 'bold 11px Inter, sans-serif';
                   ctx.fillText(pct, bar.x, bar.y - 6);
 
-                  // QTDE NA BASE INTERNA
                   ctx.fillStyle = '#ffffff';
                   ctx.font = 'bold 11px Inter, sans-serif';
                   ctx.fillText(val, bar.x, bar.base - 8);
@@ -1096,7 +1085,6 @@
                   const { startAngle, endAngle, outerRadius, innerRadius, x, y } = element;
                   const midAngle = startAngle + (endAngle - startAngle) / 2;
 
-                  // QTDE NA BASE INTERNA
                   const midRadius = (innerRadius + outerRadius) / 2;
                   const posXInt = x + Math.cos(midAngle) * midRadius;
                   const posYInt = y + Math.sin(midAngle) * midRadius;
@@ -1108,7 +1096,6 @@
                   ctx.textBaseline = 'middle';
                   ctx.fillText(val, posXInt, posYInt);
 
-                  // % NA EXTREMIDADE EXTERNA
                   const outRadius = outerRadius + 14;
                   const posXExt = x + Math.cos(midAngle) * outRadius;
                   const posYExt = y + Math.sin(midAngle) * outRadius;
@@ -1125,7 +1112,7 @@
         });
       }
 
-      // 3. AÇÕES DE HARDENING EXECUTADAS - ORDEM DECRESCENTE + DESTAQUE DO OFENSOR/PRINCIPAL
+      // 3. AÇÕES DE HARDENING EXECUTADAS
       const rawHardeningCounts = {
         "Torre": filteredData.filter(d => d.hardening.torre).length,
         "Chapa Aço": filteredData.filter(d => d.hardening.chapaAco).length,
@@ -1135,14 +1122,11 @@
         "Perímetro": filteredData.filter(d => d.hardening.perimetro).length,
       };
 
-      // Ordenar decrescente
       const sortedH = Object.entries(rawHardeningCounts).sort((a, b) => b[1] - a[1]);
       const labelsHard = sortedH.map(i => i[0]);
       const dataHard = sortedH.map(i => i[1]);
       const totalH = dataHard.reduce((a, b) => a + b, 0);
       const maxH = Math.max(...dataHard, 0);
-
-      // Cores: Primeiro em destaque violeta forte (#4f46e5) e demais em índigo suave (#818cf8)
       const bgColorsHard = dataHard.map((val, idx) => idx === 0 && val > 0 ? '#4f46e5' : '#818cf8');
 
       if (chartHardeningInst) {
@@ -1193,13 +1177,11 @@
                   ctx.save();
                   ctx.textBaseline = 'middle';
 
-                  // % NA EXTREMIDADE EXTERNA
                   ctx.textAlign = 'left';
                   ctx.fillStyle = index === 0 ? '#4f46e5' : '#1e293b';
                   ctx.font = 'bold 10.5px Inter, sans-serif';
                   ctx.fillText(pct, bar.x + 6, bar.y);
 
-                  // QTDE NA BASE INTERNA
                   ctx.textAlign = 'left';
                   ctx.fillStyle = '#ffffff';
                   ctx.font = 'bold 11px Inter, sans-serif';
@@ -1213,7 +1195,7 @@
         });
       }
 
-      // 4. TOP 10 ITENS MAIS AFETADOS (Barras Horizontais)
+      // 4. TOP 10 ITENS MAIS AFETADOS
       const itemCounts = {};
       filteredData.forEach(d => {
         let itm = d.itemAfetado ? d.itemAfetado.trim() : 'Não especificado';
@@ -1287,13 +1269,11 @@
                   ctx.save();
                   ctx.textBaseline = 'middle';
 
-                  // % NA EXTREMIDADE EXTERNA
                   ctx.textAlign = 'left';
                   ctx.fillStyle = '#1e293b';
                   ctx.font = 'bold 10px Inter, sans-serif';
                   ctx.fillText(pct, bar.x + 5, bar.y);
 
-                  // QTDE NA BASE INTERNA
                   ctx.textAlign = 'left';
                   ctx.fillStyle = '#ffffff';
                   ctx.font = 'bold 10px Inter, sans-serif';
