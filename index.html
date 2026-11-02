@@ -8,6 +8,8 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Chart.js CDN -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Chart.js Datalabels Plugin CDN (Para rótulos diretos nos gráficos) -->
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
   <!-- PapaParse CDN -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
   <!-- Font Awesome Icons -->
@@ -160,7 +162,6 @@
         <p class="text-[10px] text-slate-400 mt-1">Sites blindados vs expostos</p>
       </div>
 
-      <!-- Boletins de Ocorrência (BO) -->
       <div class="bg-white p-3.5 rounded-xl border border-slate-200/80 shadow-sm flex flex-col justify-between">
         <div class="flex items-center justify-between text-slate-500">
           <span class="text-xs font-medium uppercase tracking-wider">BOs Abertos</span>
@@ -177,7 +178,6 @@
     <!-- CONTROL BAR & FILTERS -->
     <section class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-wrap items-center justify-between gap-4">
       <div class="flex flex-wrap items-center gap-3 flex-1 min-w-[280px]">
-        <!-- Regional Filter -->
         <div class="w-full sm:w-auto">
           <label class="block text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-1">Filtrar Regional / DDD</label>
           <select id="filter-regional" onchange="applyFilters()" class="w-full sm:w-48 text-xs bg-slate-50 border border-slate-300 rounded-lg p-2 font-medium text-slate-700 focus:ring-2 focus:ring-sky-500 focus:outline-none">
@@ -185,7 +185,6 @@
           </select>
         </div>
 
-        <!-- Recuperação Filter -->
         <div class="w-full sm:w-auto">
           <label class="block text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-1">Status Recuperação</label>
           <select id="filter-recuperacao" onchange="applyFilters()" class="w-full sm:w-48 text-xs bg-slate-50 border border-slate-300 rounded-lg p-2 font-medium text-slate-700 focus:ring-2 focus:ring-sky-500 focus:outline-none">
@@ -196,7 +195,6 @@
           </select>
         </div>
 
-        <!-- Proteção Filter -->
         <div class="w-full sm:w-auto">
           <label class="block text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-1">Proteção (Hardening)</label>
           <select id="filter-protecao" onchange="applyFilters()" class="w-full sm:w-48 text-xs bg-slate-50 border border-slate-300 rounded-lg p-2 font-medium text-slate-700 focus:ring-2 focus:ring-sky-500 focus:outline-none">
@@ -208,7 +206,6 @@
         </div>
       </div>
 
-      <!-- Search Input -->
       <div class="w-full lg:w-72">
         <label class="block text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-1">Busca Site / O.S. PRISMA</label>
         <div class="relative">
@@ -220,6 +217,7 @@
 
     <!-- CHARTS SECTION (LINHA 1) -->
     <section class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+      <!-- 1. Ocorrências por Regional -->
       <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between">
         <div class="flex items-center justify-between mb-2">
           <div>
@@ -237,7 +235,7 @@
         </div>
       </div>
 
-      <!-- GRÁFICO ATUALIZADO: RECUPERADOS (QTDE E %) -->
+      <!-- 2. Status de Recuperação -->
       <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between">
         <div class="flex items-center justify-between mb-2">
           <div>
@@ -255,6 +253,7 @@
         </div>
       </div>
 
+      <!-- 3. Ações de Hardening Executadas -->
       <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between">
         <div class="flex items-center justify-between mb-2">
           <div>
@@ -273,7 +272,7 @@
       </div>
     </section>
 
-    <!-- NOVO GRÁFICO: TOP 10 ITENS MAIS AFETADOS -->
+    <!-- 4. TOP 10 ITENS MAIS AFETADOS -->
     <section class="grid grid-cols-1 gap-5">
       <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col">
         <div class="flex items-center justify-between mb-2 pb-2 border-b border-slate-100">
@@ -285,7 +284,7 @@
           </div>
           <span class="text-[11px] bg-amber-50 text-amber-700 font-semibold px-2 py-0.5 rounded border border-amber-200">Volumetria</span>
         </div>
-        <div class="h-72 relative">
+        <div class="h-80 relative">
           <canvas id="chart-top-itens"></canvas>
         </div>
       </div>
@@ -481,6 +480,9 @@
 
   <!-- JAVASCRIPT -->
   <script>
+    // Registar o plugin de rótulos globalmente
+    Chart.register(ChartDataLabels);
+
     const GOOGLE_SHEETS_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT9vnTCjlHu1HZPX-sgt29TsDb5A-qY8uj0iWZoeTBHaqb8uMLmbX12WpTALmfHutcVw0G8T68MBfTX/pub?gid=222993592&single=true&output=csv';
 
     let rawData = [];
@@ -551,11 +553,9 @@
         const osPrisma = getVal(['O.S. PRISMA', 'PRISMA', 'OS']) || 'Pendente';
         const tipoEvento = getVal(['Tipo de Evento', 'Evento']) || 'Furto/Vandalismo';
         
-        // Item Afetado / Vandalizado
         const itemAfetado = getVal(['Itens Vandalizados', 'Item Vandalizado', 'Item Furtado', 'Item']) || 'Não especificado';
         const impacto = getVal(['Impacto Operacional', 'Impacto']) || 'Não informado';
         
-        // Status de Recuperação Padronizado
         const rawRec = getVal(['Status Recuperação', 'Recuperação', 'Status Rec']);
         let recuperacao = 'Pendente de Recuperação';
         if (cleanStr(rawRec).includes('definitiv')) {
@@ -568,7 +568,6 @@
         const pendencia = getVal(['Pendências', 'Pendencia']) || 'Nenhuma';
         const protecao = getVal(['Status Proteção', 'Hardening', 'Proteção']) || 'Vulnerável';
         
-        // Validação Robusta de BO (conforme planilha: "BO Realizado?" e "Nº Boletim Ocorrência")
         const boVal = getVal(['BO Realizado?', 'BO Realizado', 'Boletim Realizado', 'BO']);
         const numBo = getVal(['Nº Boletim Ocorrência', 'Nº Boletim', 'Numero BO', 'Num BO']);
         const hasBO = cleanStr(boVal).includes('sim') || (numBo !== '' && numBo !== '0' && !cleanStr(numBo).includes('nao') && !cleanStr(numBo).includes('n/a'));
@@ -727,7 +726,6 @@
       document.getElementById('kpi-protegidos').innerText = protOK;
       document.getElementById('kpi-vulneraveis').innerText = `${protVuln} vuln.`;
 
-      // BOs Totalizados Corretamente
       const boCount = filteredData.filter(d => d.hasBOCheck).length;
       document.getElementById('kpi-bo-abertos').innerText = boCount;
       document.getElementById('kpi-bo-percent').innerText = total > 0 ? `${((boCount/total)*100).toFixed(1)}%` : '0%';
@@ -772,7 +770,9 @@
     }
 
     function initOrUpdateCharts() {
-      // 1. Ocorrências por Regional
+      const totalGeral = filteredData.length;
+
+      // 1. Ocorrências por Regional (DDDs)
       const regCounts = {};
       filteredData.forEach(d => {
         regCounts[d.regional] = (regCounts[d.regional] || 0) + 1;
@@ -780,10 +780,12 @@
 
       const labelsReg = Object.keys(regCounts);
       const dataReg = Object.values(regCounts);
+      const maxReg = Math.max(...dataReg, 0);
 
       if (chartRegionaisInst) {
         chartRegionaisInst.data.labels = labelsReg;
         chartRegionaisInst.data.datasets[0].data = dataReg;
+        chartRegionaisInst.options.scales.y.suggestedMax = maxReg + 1;
         chartRegionaisInst.update();
       } else {
         const ctxReg = document.getElementById('chart-regionais').getContext('2d');
@@ -793,11 +795,35 @@
             labels: labelsReg,
             datasets: [{ data: dataReg, backgroundColor: '#0284c7', borderRadius: 4 }]
           },
-          options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { display: false },
+              datalabels: {
+                anchor: 'end',
+                align: 'top',
+                color: '#1e293b',
+                font: { size: 10, weight: 'bold' },
+                formatter: function(value) {
+                  if (value === 0) return '';
+                  const pct = totalGeral > 0 ? ((value / totalGeral) * 100).toFixed(1) : '0.0';
+                  return `${value} (${pct}%)`;
+                }
+              }
+            },
+            scales: {
+              y: {
+                beginAtZero: true,
+                suggestedMax: maxReg + 1,
+                ticks: { stepSize: 1, precision: 0 }
+              }
+            }
+          }
         });
       }
 
-      // 2. Gráfico Recuperação: Definitivo, Provisório, Pendente (Qtde e %)
+      // 2. Gráfico Status de Recuperação (Doughnut)
       const recDef = filteredData.filter(d => cleanStr(d.recuperacao).includes('definitiv')).length;
       const recProv = filteredData.filter(d => cleanStr(d.recuperacao).includes('provisor')).length;
       const recPend = filteredData.filter(d => !cleanStr(d.recuperacao).includes('definitiv') && !cleanStr(d.recuperacao).includes('provisor')).length;
@@ -828,6 +854,16 @@
             maintainAspectRatio: false,
             plugins: {
               legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 10 } } },
+              datalabels: {
+                color: '#ffffff',
+                font: { size: 11, weight: 'bold' },
+                formatter: function(value) {
+                  if (value === 0 || totalRec === 0) return null;
+                  const pct = ((value / totalRec) * 100).toFixed(1);
+                  return `${value}\n(${pct}%)`;
+                },
+                textAlign: 'center'
+              },
               tooltip: {
                 callbacks: {
                   label: function(context) {
@@ -838,12 +874,12 @@
                 }
               }
             },
-            cutout: '60%'
+            cutout: '58%'
           }
         });
       }
 
-      // 3. Ações de Hardening Executadas
+      // 3. Ações de Hardening Executadas (Barras Horizontais)
       const hCounts = {
         "Torre": filteredData.filter(d => d.hardening.torre).length,
         "Chapa Aço": filteredData.filter(d => d.hardening.chapaAco).length,
@@ -853,8 +889,13 @@
         "Perímetro": filteredData.filter(d => d.hardening.perimetro).length,
       };
 
+      const hValues = Object.values(hCounts);
+      const totalH = hValues.reduce((a, b) => a + b, 0);
+      const maxH = Math.max(...hValues, 0);
+
       if (chartHardeningInst) {
-        chartHardeningInst.data.datasets[0].data = Object.values(hCounts);
+        chartHardeningInst.data.datasets[0].data = hValues;
+        chartHardeningInst.options.scales.x.suggestedMax = maxH + 1;
         chartHardeningInst.update();
       } else {
         const ctxHard = document.getElementById('chart-hardening').getContext('2d');
@@ -862,13 +903,38 @@
           type: 'bar',
           data: {
             labels: Object.keys(hCounts),
-            datasets: [{ data: Object.values(hCounts), backgroundColor: '#6366f1', borderRadius: 4 }]
+            datasets: [{ data: hValues, backgroundColor: '#6366f1', borderRadius: 4 }]
           },
-          options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+          options: {
+            indexAxis: 'y',
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { display: false },
+              datalabels: {
+                anchor: 'end',
+                align: 'right',
+                color: '#1e293b',
+                font: { size: 10, weight: 'bold' },
+                formatter: function(value) {
+                  if (value === 0) return '';
+                  const pct = totalH > 0 ? ((value / totalH) * 100).toFixed(1) : '0.0';
+                  return `${value} (${pct}%)`;
+                }
+              }
+            },
+            scales: {
+              x: {
+                beginAtZero: true,
+                suggestedMax: maxH + 1,
+                ticks: { stepSize: 1, precision: 0 }
+              }
+            }
+          }
         });
       }
 
-      // 4. NOVO GRÁFICO: TOP 10 ITENS MAIS AFETADOS
+      // 4. Top 10 Itens Mais Afetados (Barras Horizontais)
       const itemCounts = {};
       filteredData.forEach(d => {
         let itm = d.itemAfetado ? d.itemAfetado.trim() : 'Não especificado';
@@ -883,10 +949,13 @@
 
       const labelsItens = sortedItens.map(i => i[0].length > 40 ? i[0].substring(0, 37) + '...' : i[0]);
       const dataItens = sortedItens.map(i => i[1]);
+      const totalItens = dataItens.reduce((a, b) => a + b, 0);
+      const maxItens = Math.max(...dataItens, 0);
 
       if (chartTopItensInst) {
         chartTopItensInst.data.labels = labelsItens;
         chartTopItensInst.data.datasets[0].data = dataItens;
+        chartTopItensInst.options.scales.x.suggestedMax = maxItens + 1;
         chartTopItensInst.update();
       } else {
         const ctxTopItens = document.getElementById('chart-top-itens').getContext('2d');
@@ -907,6 +976,17 @@
             maintainAspectRatio: false,
             plugins: {
               legend: { display: false },
+              datalabels: {
+                anchor: 'end',
+                align: 'right',
+                color: '#1e293b',
+                font: { size: 10, weight: 'bold' },
+                formatter: function(value) {
+                  if (value === 0) return '';
+                  const pct = totalItens > 0 ? ((value / totalItens) * 100).toFixed(1) : '0.0';
+                  return `${value} (${pct}%)`;
+                }
+              },
               tooltip: {
                 callbacks: {
                   title: function(items) {
@@ -917,7 +997,11 @@
               }
             },
             scales: {
-              x: { ticks: { stepSize: 1, precision: 0 } }
+              x: {
+                beginAtZero: true,
+                suggestedMax: maxItens + 1,
+                ticks: { stepSize: 1, precision: 0 }
+              }
             }
           }
         });
