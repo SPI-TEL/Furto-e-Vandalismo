@@ -8,7 +8,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Chart.js CDN -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <!-- Chart.js Datalabels Plugin CDN (Para rótulos diretos nos gráficos) -->
+  <!-- Chart.js Datalabels Plugin CDN -->
   <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
   <!-- PapaParse CDN -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
@@ -50,41 +50,41 @@
 
   <!-- TOP HEADER -->
   <header class="bg-slate-900 text-white shadow-md border-b border-slate-800 sticky top-0 z-40">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex flex-wrap items-center justify-between gap-4">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex flex-wrap items-center justify-between gap-4">
       <div class="flex items-center space-x-3">
-        <div class="bg-sky-500 text-white p-2.5 rounded-lg shadow-sm flex items-center justify-center">
-          <i class="fa-solid fa-shield-halved text-xl"></i>
+        <div class="bg-sky-500 text-white p-2 rounded-lg shadow-sm flex items-center justify-center">
+          <i class="fa-solid fa-shield-halved text-lg"></i>
         </div>
         <div>
           <div class="flex items-center space-x-2">
-            <h1 class="text-lg font-bold tracking-tight text-white">Painel Gerencial de Furto & Vandalismo</h1>
-            <span class="bg-sky-500/20 text-sky-300 text-xs px-2 py-0.5 rounded font-medium border border-sky-500/30">Google Sheets Live</span>
+            <h1 class="text-base font-bold tracking-tight text-white">Painel Gerencial de Furto & Vandalismo</h1>
+            <span class="bg-sky-500/20 text-sky-300 text-[10px] px-2 py-0.5 rounded font-medium border border-sky-500/30">Google Sheets Live</span>
           </div>
-          <p class="text-xs text-slate-400">DDDs 12 a 19 • Integração PRISMA & Hardening Físico • Alinhamento Semanal</p>
+          <p class="text-[11px] text-slate-400">DDDs 12 a 19 • Integração PRISMA & Hardening Físico • Alinhamento Semanal</p>
         </div>
       </div>
       
       <!-- Action buttons -->
       <div class="flex items-center space-x-3">
         <div class="text-right hidden sm:block">
-          <p class="text-xs text-slate-400">Última sincronização</p>
+          <p class="text-[10px] text-slate-400">Última sincronização</p>
           <p class="text-xs font-semibold text-slate-200" id="clock-timestamp">Carregando...</p>
         </div>
         <button onclick="fetchGoogleSheetsData()" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-md text-xs font-semibold shadow-sm flex items-center gap-1.5 transition">
-          <i class="fa-solid fa-rotate text-xs"></i> Atualizar Dados
+          <i class="fa-solid fa-rotate text-xs"></i> Atualizar
         </button>
         <button onclick="window.print()" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-md text-xs font-medium border border-slate-700 flex items-center gap-1.5 transition">
           <i class="fa-solid fa-print"></i> Relatório
         </button>
         <button onclick="exportCSV()" class="px-3 py-1.5 bg-sky-600 hover:bg-sky-500 text-white rounded-md text-xs font-semibold shadow-sm flex items-center gap-1.5 transition">
-          <i class="fa-solid fa-file-excel"></i> Exportar Base
+          <i class="fa-solid fa-file-excel"></i> Exportar
         </button>
       </div>
     </div>
   </header>
 
   <!-- BANNER DE STATUS DO CARREGAMENTO -->
-  <div id="loading-banner" class="bg-sky-500/10 border-b border-sky-300/40 text-sky-900 px-4 py-2 text-xs">
+  <div id="loading-banner" class="bg-sky-500/10 border-b border-sky-300/40 text-sky-900 px-4 py-1.5 text-xs">
     <div class="max-w-7xl mx-auto flex items-center justify-between">
       <div class="flex items-center gap-2">
         <i class="fa-solid fa-circle-notch fa-spin text-sky-600"></i>
@@ -95,99 +95,101 @@
   </div>
 
   <!-- MAIN CONTAINER -->
-  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6 flex-1 w-full">
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 space-y-5 flex-1 w-full">
 
     <!-- KPI CARDS -->
-    <section class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3.5">
-      <div class="bg-white p-3.5 rounded-xl border border-slate-200/80 shadow-sm flex flex-col justify-between">
+    <section class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+      <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between">
         <div class="flex items-center justify-between text-slate-500">
-          <span class="text-xs font-medium uppercase tracking-wider">Total Sinistros</span>
-          <i class="fa-solid fa-bolt text-slate-400"></i>
+          <span class="text-[11px] font-medium uppercase tracking-wider">Total Sinistros</span>
+          <i class="fa-solid fa-bolt text-slate-400 text-xs"></i>
         </div>
-        <div class="mt-2 flex items-baseline justify-between">
+        <div class="mt-1 flex items-baseline justify-between">
           <span class="text-2xl font-extrabold text-slate-900" id="kpi-total">0</span>
-          <span class="text-[11px] font-semibold text-rose-600 bg-rose-50 px-1.5 py-0.5 rounded" id="kpi-total-badge">Base Geral</span>
+          <span class="text-[10px] font-semibold text-rose-600 bg-rose-50 px-1.5 py-0.5 rounded" id="kpi-total-badge">Base Geral</span>
         </div>
-        <p class="text-[10px] text-slate-400 mt-1">Registros na planilha</p>
+        <p class="text-[10px] text-slate-400 mt-0.5">Registros na planilha</p>
       </div>
 
-      <div class="bg-white p-3.5 rounded-xl border border-rose-200 shadow-sm flex flex-col justify-between relative overflow-hidden">
-        <div class="absolute top-0 right-0 w-12 h-12 bg-rose-50 rounded-bl-full flex items-start justify-end p-1.5">
+      <div class="bg-white p-3 rounded-xl border border-rose-200 shadow-sm flex flex-col justify-between relative overflow-hidden">
+        <div class="absolute top-0 right-0 w-10 h-10 bg-rose-50 rounded-bl-full flex items-start justify-end p-1">
           <span class="w-2 h-2 rounded-full bg-rose-600 badge-alert"></span>
         </div>
         <div class="flex items-center justify-between text-rose-700">
-          <span class="text-xs font-semibold uppercase tracking-wider">Reincid. 30 Dias</span>
-          <i class="fa-solid fa-triangle-exclamation text-rose-500"></i>
+          <span class="text-[11px] font-semibold uppercase tracking-wider">Reincid. 30 Dias</span>
+          <i class="fa-solid fa-triangle-exclamation text-rose-500 text-xs"></i>
         </div>
-        <div class="mt-2 flex items-baseline justify-between">
+        <div class="mt-1 flex items-baseline justify-between">
           <span class="text-2xl font-extrabold text-rose-600" id="kpi-reinc-30">0</span>
-          <span class="text-[11px] font-semibold text-rose-700 bg-rose-100 px-1.5 py-0.5 rounded">Crítico</span>
+          <span class="text-[10px] font-semibold text-rose-700 bg-rose-100 px-1.5 py-0.5 rounded">Crítico</span>
         </div>
-        <p class="text-[10px] text-slate-400 mt-1">Janela de 30 dias</p>
+        <p class="text-[10px] text-slate-400 mt-0.5">Janela de 30 dias</p>
       </div>
 
-      <div class="bg-white p-3.5 rounded-xl border border-slate-200/80 shadow-sm flex flex-col justify-between">
+      <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between">
         <div class="flex items-center justify-between text-slate-500">
-          <span class="text-xs font-medium uppercase tracking-wider">Reincidentes Ano</span>
-          <i class="fa-solid fa-rotate-right text-slate-400"></i>
+          <span class="text-[11px] font-medium uppercase tracking-wider">Reincidentes Ano</span>
+          <i class="fa-solid fa-rotate-right text-slate-400 text-xs"></i>
         </div>
-        <div class="mt-2 flex items-baseline justify-between">
+        <div class="mt-1 flex items-baseline justify-between">
           <span class="text-2xl font-extrabold text-amber-600" id="kpi-reinc-ano">0</span>
-          <span class="text-[11px] font-semibold text-amber-700 bg-amber-50 px-1.5 py-0.5 rounded" id="kpi-reinc-perc">0%</span>
+          <span class="text-[10px] font-semibold text-amber-700 bg-amber-50 px-1.5 py-0.5 rounded" id="kpi-reinc-perc">0%</span>
         </div>
-        <p class="text-[10px] text-slate-400 mt-1">Acumulado no ano</p>
+        <p class="text-[10px] text-slate-400 mt-0.5">Acumulado no ano</p>
       </div>
 
-      <div class="bg-white p-3.5 rounded-xl border border-slate-200/80 shadow-sm flex flex-col justify-between">
+      <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between">
         <div class="flex items-center justify-between text-slate-500">
-          <span class="text-xs font-medium uppercase tracking-wider">Recuperação</span>
-          <i class="fa-solid fa-wrench text-slate-400"></i>
+          <span class="text-[11px] font-medium uppercase tracking-wider">Recuperação</span>
+          <i class="fa-solid fa-wrench text-slate-400 text-xs"></i>
         </div>
-        <div class="mt-2 flex items-baseline justify-between">
+        <div class="mt-1 flex items-baseline justify-between">
           <span class="text-2xl font-extrabold text-emerald-600" id="kpi-rec-def">0</span>
-          <span class="text-[11px] font-semibold text-amber-600 bg-amber-50 px-1.5 py-0.5 rounded" id="kpi-rec-prov">0 prov.</span>
+          <span class="text-[10px] font-semibold text-amber-600 bg-amber-50 px-1.5 py-0.5 rounded" id="kpi-rec-prov">0 prov.</span>
         </div>
-        <p class="text-[10px] text-slate-400 mt-1">Definitivo vs Provisório</p>
+        <p class="text-[10px] text-slate-400 mt-0.5">Definitivo vs Provisório</p>
       </div>
 
-      <div class="bg-white p-3.5 rounded-xl border border-slate-200/80 shadow-sm flex flex-col justify-between">
+      <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between">
         <div class="flex items-center justify-between text-slate-500">
-          <span class="text-xs font-medium uppercase tracking-wider">Status Hardening</span>
-          <i class="fa-solid fa-lock text-slate-400"></i>
+          <span class="text-[11px] font-medium uppercase tracking-wider">Status Hardening</span>
+          <i class="fa-solid fa-lock text-slate-400 text-xs"></i>
         </div>
-        <div class="mt-2 flex items-baseline justify-between">
+        <div class="mt-1 flex items-baseline justify-between">
           <span class="text-2xl font-extrabold text-sky-700" id="kpi-protegidos">0</span>
-          <span class="text-[11px] font-semibold text-rose-600 bg-rose-50 px-1.5 py-0.5 rounded" id="kpi-vulneraveis">0 vuln.</span>
+          <span class="text-[10px] font-semibold text-rose-600 bg-rose-50 px-1.5 py-0.5 rounded" id="kpi-vulneraveis">0 vuln.</span>
         </div>
-        <p class="text-[10px] text-slate-400 mt-1">Sites blindados vs expostos</p>
+        <p class="text-[10px] text-slate-400 mt-0.5">Blindados vs expostos</p>
       </div>
 
-      <div class="bg-white p-3.5 rounded-xl border border-slate-200/80 shadow-sm flex flex-col justify-between">
+      <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between">
         <div class="flex items-center justify-between text-slate-500">
-          <span class="text-xs font-medium uppercase tracking-wider">BOs Abertos</span>
-          <i class="fa-solid fa-file-shield text-slate-400"></i>
+          <span class="text-[11px] font-medium uppercase tracking-wider">BOs Abertos</span>
+          <i class="fa-solid fa-file-shield text-slate-400 text-xs"></i>
         </div>
-        <div class="mt-2 flex items-baseline justify-between">
+        <div class="mt-1 flex items-baseline justify-between">
           <span class="text-2xl font-extrabold text-slate-800" id="kpi-bo-abertos">0</span>
-          <span class="text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded" id="kpi-bo-percent">0%</span>
+          <span class="text-[10px] font-semibold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded" id="kpi-bo-percent">0%</span>
         </div>
-        <p class="text-[10px] text-slate-400 mt-1">Aderência jurídica</p>
+        <p class="text-[10px] text-slate-400 mt-0.5">Aderência jurídica</p>
       </div>
     </section>
 
     <!-- CONTROL BAR & FILTERS -->
-    <section class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-wrap items-center justify-between gap-4">
+    <section class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-sm flex flex-wrap items-center justify-between gap-3">
       <div class="flex flex-wrap items-center gap-3 flex-1 min-w-[280px]">
+        <!-- Regional Filter -->
         <div class="w-full sm:w-auto">
-          <label class="block text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-1">Filtrar Regional / DDD</label>
-          <select id="filter-regional" onchange="applyFilters()" class="w-full sm:w-48 text-xs bg-slate-50 border border-slate-300 rounded-lg p-2 font-medium text-slate-700 focus:ring-2 focus:ring-sky-500 focus:outline-none">
+          <label class="block text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-1">Filtrar Regional / DDD</label>
+          <select id="filter-regional" onchange="applyFilters()" class="w-full sm:w-44 text-xs bg-slate-50 border border-slate-300 rounded-lg p-2 font-medium text-slate-700 focus:ring-2 focus:ring-sky-500 focus:outline-none">
             <option value="ALL">Todas</option>
           </select>
         </div>
 
+        <!-- Recuperação Filter -->
         <div class="w-full sm:w-auto">
-          <label class="block text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-1">Status Recuperação</label>
-          <select id="filter-recuperacao" onchange="applyFilters()" class="w-full sm:w-48 text-xs bg-slate-50 border border-slate-300 rounded-lg p-2 font-medium text-slate-700 focus:ring-2 focus:ring-sky-500 focus:outline-none">
+          <label class="block text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-1">Status Recuperação</label>
+          <select id="filter-recuperacao" onchange="applyFilters()" class="w-full sm:w-44 text-xs bg-slate-50 border border-slate-300 rounded-lg p-2 font-medium text-slate-700 focus:ring-2 focus:ring-sky-500 focus:outline-none">
             <option value="ALL">Todos os Status</option>
             <option value="Recuperado Definitivo">Recuperado Definitivo</option>
             <option value="Recuperado Provisório">Recuperado Provisório</option>
@@ -195,9 +197,10 @@
           </select>
         </div>
 
+        <!-- Proteção Filter -->
         <div class="w-full sm:w-auto">
-          <label class="block text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-1">Proteção (Hardening)</label>
-          <select id="filter-protecao" onchange="applyFilters()" class="w-full sm:w-48 text-xs bg-slate-50 border border-slate-300 rounded-lg p-2 font-medium text-slate-700 focus:ring-2 focus:ring-sky-500 focus:outline-none">
+          <label class="block text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-1">Status de Proteção</label>
+          <select id="filter-protecao" onchange="applyFilters()" class="w-full sm:w-44 text-xs bg-slate-50 border border-slate-300 rounded-lg p-2 font-medium text-slate-700 focus:ring-2 focus:ring-sky-500 focus:outline-none">
             <option value="ALL">Todas as Condições</option>
             <option value="Protegido">Protegido</option>
             <option value="Parcialmente Protegido">Parcialmente Protegido</option>
@@ -206,8 +209,9 @@
         </div>
       </div>
 
+      <!-- Search Input -->
       <div class="w-full lg:w-72">
-        <label class="block text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-1">Busca Site / O.S. PRISMA</label>
+        <label class="block text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-1">Busca Site / O.S. PRISMA</label>
         <div class="relative">
           <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-slate-400 text-xs"></i>
           <input type="text" id="search-input" onkeyup="applyFilters()" placeholder="Ex: CPS-001 ou PRISMA..." class="w-full pl-8 pr-3 py-1.5 text-xs bg-slate-50 border border-slate-300 rounded-lg text-slate-700 focus:ring-2 focus:ring-sky-500 focus:outline-none">
@@ -215,183 +219,183 @@
       </div>
     </section>
 
-    <!-- CHARTS SECTION (LINHA 1) -->
-    <section class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+    <!-- LINHA 1 DE GRÁFICOS: REGIONAIS, STATUS RECUPERAÇÃO E HARDENING -->
+    <section class="grid grid-cols-1 lg:grid-cols-3 gap-4">
       <!-- 1. Ocorrências por Regional -->
-      <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between">
-        <div class="flex items-center justify-between mb-2">
+      <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between">
+        <div class="flex items-center justify-between mb-1">
           <div>
             <h2 class="text-xs font-bold uppercase tracking-wider text-slate-700 flex items-center gap-1.5">
               <i class="fa-solid fa-chart-column text-sky-600"></i> Ocorrências por Regional (DDDs)
             </h2>
-            <p class="text-[11px] text-slate-400">Identificação da Regional Ofensora</p>
+            <p class="text-[10px] text-slate-400">Identificação da Regional Ofensora</p>
           </div>
         </div>
         <div class="h-64 relative">
           <canvas id="chart-regionais"></canvas>
         </div>
-        <div class="pt-2 text-[11px] text-slate-500 text-center border-t border-slate-100">
+        <div class="pt-2 text-[10px] text-slate-500 text-center border-t border-slate-100">
           <span>Distribuição de sinistros por DDD</span>
         </div>
       </div>
 
       <!-- 2. Status de Recuperação -->
-      <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between">
-        <div class="flex items-center justify-between mb-2">
+      <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between">
+        <div class="flex items-center justify-between mb-1">
           <div>
             <h2 class="text-xs font-bold uppercase tracking-wider text-slate-700 flex items-center gap-1.5">
               <i class="fa-solid fa-chart-pie text-emerald-600"></i> Status de Recuperação
             </h2>
-            <p class="text-[11px] text-slate-400">Definitivo, Provisório e Pendente</p>
+            <p class="text-[10px] text-slate-400">Definitivo, Provisório e Pendente</p>
           </div>
         </div>
         <div class="h-64 relative">
           <canvas id="chart-rec-prot"></canvas>
         </div>
-        <div class="pt-2 text-[11px] text-slate-500 text-center border-t border-slate-100">
+        <div class="pt-2 text-[10px] text-slate-500 text-center border-t border-slate-100">
           <span>Distribuição percentual e absoluta dos sites</span>
         </div>
       </div>
 
       <!-- 3. Ações de Hardening Executadas -->
-      <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between">
-        <div class="flex items-center justify-between mb-2">
+      <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between">
+        <div class="flex items-center justify-between mb-1">
           <div>
             <h2 class="text-xs font-bold uppercase tracking-wider text-slate-700 flex items-center gap-1.5">
               <i class="fa-solid fa-shield-virus text-indigo-600"></i> Ações de Hardening Executadas
             </h2>
-            <p class="text-[11px] text-slate-400">Medidas anti-reincidência instaladas</p>
+            <p class="text-[10px] text-slate-400">Medidas anti-reincidência instaladas</p>
           </div>
         </div>
         <div class="h-64 relative">
           <canvas id="chart-hardening"></canvas>
         </div>
-        <div class="pt-2 text-[11px] text-slate-500 text-center border-t border-slate-100">
-          <p>Controle de intervenções físicas executadas</p>
+        <div class="pt-2 text-[10px] text-slate-500 text-center border-t border-slate-100">
+          <span>Controle de intervenções físicas executadas</span>
         </div>
       </div>
     </section>
 
-    <!-- 4. TOP 10 ITENS MAIS AFETADOS -->
-    <section class="grid grid-cols-1 gap-5">
-      <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col">
-        <div class="flex items-center justify-between mb-2 pb-2 border-b border-slate-100">
+    <!-- LINHA 2: TOP SITES OFENSORES (ABAIXO DE REGIONAL) E TOP 10 ITENS AFETADOS NA MESMA LINHA -->
+    <section class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+      <!-- TOP SITES OFENSORES (1 Coluna) -->
+      <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-sm flex flex-col">
+        <div class="flex items-center justify-between pb-2 border-b border-slate-100">
+          <div>
+            <h2 class="text-xs font-bold uppercase tracking-wider text-slate-800 flex items-center gap-1.5">
+              <i class="fa-solid fa-skull-crossbones text-rose-500"></i> Top Sites Ofensores
+            </h2>
+            <p class="text-[10px] text-slate-400">Sites com maior concentração</p>
+          </div>
+          <span class="text-[9px] font-semibold text-rose-700 bg-rose-50 px-1.5 py-0.5 rounded border border-rose-200">Reincidência</span>
+        </div>
+
+        <div class="divide-y divide-slate-100 mt-1 flex-1 overflow-y-auto max-h-[300px]" id="top-offenders-list">
+          <p class="text-xs text-slate-400 p-4 text-center">Carregando ranking...</p>
+        </div>
+      </div>
+
+      <!-- TOP 10 ITENS AFETADOS (2 Colunas) -->
+      <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-sm flex flex-col lg:col-span-2">
+        <div class="flex items-center justify-between pb-2 border-b border-slate-100">
           <div>
             <h2 class="text-xs font-bold uppercase tracking-wider text-slate-700 flex items-center gap-1.5">
               <i class="fa-solid fa-layer-group text-amber-600"></i> Top 10 Itens Mais Afetados (Furtados / Vandalizados)
             </h2>
-            <p class="text-[11px] text-slate-400">Ranking por volume total de incidentes</p>
+            <p class="text-[10px] text-slate-400">Ranking por volume total de incidentes</p>
           </div>
-          <span class="text-[11px] bg-amber-50 text-amber-700 font-semibold px-2 py-0.5 rounded border border-amber-200">Volumetria</span>
+          <span class="text-[10px] bg-amber-50 text-amber-700 font-semibold px-2 py-0.5 rounded border border-amber-200">Volumetria</span>
         </div>
-        <div class="h-80 relative">
+        <div class="h-[295px] relative mt-1">
           <canvas id="chart-top-itens"></canvas>
         </div>
       </div>
     </section>
 
-    <!-- RANKING DE SITES OFENSORES E ROTEIRO -->
-    <section class="grid grid-cols-1 lg:grid-cols-3 gap-5">
-      <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col">
-        <div class="flex items-center justify-between pb-3 border-b border-slate-100">
-          <div>
-            <h2 class="text-xs font-bold uppercase tracking-wider text-slate-800 flex items-center gap-1.5">
-              <i class="fa-solid fa-skull-crossbones text-rose-500"></i> Top Sites Ofensores
-            </h2>
-            <p class="text-[11px] text-slate-400">Sites com maior concentração de ocorrências</p>
-          </div>
-          <span class="text-[10px] font-semibold text-rose-700 bg-rose-50 px-2 py-0.5 rounded border border-rose-200">Reincidência</span>
+    <!-- ROTEIRO DE TRATATIVA SEMANAL COMPACTO (ALTURA REDUZIDA PELA METADE) -->
+    <section class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-sm">
+      <div class="flex items-center justify-between pb-2 border-b border-slate-100 mb-2.5">
+        <div>
+          <h2 class="text-xs font-bold uppercase tracking-wider text-slate-800 flex items-center gap-1.5">
+            <i class="fa-solid fa-list-check text-sky-600"></i> Roteiro de Tratativa Semanal com Supervisão
+          </h2>
+          <p class="text-[10px] text-slate-400">Pontos de auditoria nas reuniões operacionais</p>
         </div>
-
-        <div class="divide-y divide-slate-100 mt-2 flex-1" id="top-offenders-list">
-          <p class="text-xs text-slate-400 p-4 text-center">Carregando ranking...</p>
-        </div>
+        <span class="text-[10px] bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-mono">Pauta Semanal</span>
       </div>
 
-      <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col lg:col-span-2">
-        <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-2.5">
+        <div class="bg-slate-50 p-2.5 rounded-lg border border-slate-200 flex items-start gap-2.5">
+          <span class="w-5 h-5 rounded-full bg-sky-600 text-white text-[10px] font-bold flex items-center justify-center shrink-0 mt-0.5">1</span>
           <div>
-            <h2 class="text-xs font-bold uppercase tracking-wider text-slate-800 flex items-center gap-1.5">
-              <i class="fa-solid fa-list-check text-sky-600"></i> Roteiro de Tratativa Semanal com Supervisão
-            </h2>
-            <p class="text-[11px] text-slate-400">Pontos de auditoria nas reuniões operacionais</p>
-          </div>
-          <span class="text-[11px] bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-mono">Pauta Semanal</span>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-3 flex-1">
-          <div class="bg-slate-50 p-3 rounded-lg border border-slate-200">
-            <div class="flex items-center gap-2 mb-1.5">
-              <span class="w-5 h-5 rounded-full bg-sky-600 text-white text-[11px] font-bold flex items-center justify-center">1</span>
-              <h3 class="text-xs font-bold text-slate-800">Saneamento PRISMA</h3>
-            </div>
-            <p class="text-[11px] text-slate-600 leading-relaxed">
+            <h3 class="text-xs font-bold text-slate-800">Saneamento PRISMA</h3>
+            <p class="text-[11px] text-slate-600 leading-snug mt-0.5">
               Validar abertura de O.S. no PRISMA para todos os informes de WhatsApp para conciliação no controle Vier.
             </p>
           </div>
+        </div>
 
-          <div class="bg-slate-50 p-3 rounded-lg border border-slate-200">
-            <div class="flex items-center gap-2 mb-1.5">
-              <span class="w-5 h-5 rounded-full bg-amber-600 text-white text-[11px] font-bold flex items-center justify-center">2</span>
-              <h3 class="text-xs font-bold text-slate-800">Provisórios &gt; Definitivos</h3>
-            </div>
-            <p class="text-[11px] text-slate-600 leading-relaxed">
+        <div class="bg-slate-50 p-2.5 rounded-lg border border-slate-200 flex items-start gap-2.5">
+          <span class="w-5 h-5 rounded-full bg-amber-600 text-white text-[10px] font-bold flex items-center justify-center shrink-0 mt-0.5">2</span>
+          <div>
+            <h3 class="text-xs font-bold text-slate-800">Provisórios &gt; Definitivos</h3>
+            <p class="text-[11px] text-slate-600 leading-snug mt-0.5">
               Cobrar cronograma de substituição de cabos de cobre por alumínio/híbrido nos sites em caráter provisório.
             </p>
           </div>
+        </div>
 
-          <div class="bg-slate-50 p-3 rounded-lg border border-slate-200">
-            <div class="flex items-center gap-2 mb-1.5">
-              <span class="w-5 h-5 rounded-full bg-emerald-600 text-white text-[11px] font-bold flex items-center justify-center">3</span>
-              <h3 class="text-xs font-bold text-slate-800">Evidência de Hardening</h3>
-            </div>
-            <p class="text-[11px] text-slate-600 leading-relaxed">
+        <div class="bg-slate-50 p-2.5 rounded-lg border border-slate-200 flex items-start gap-2.5">
+          <span class="w-5 h-5 rounded-full bg-emerald-600 text-white text-[10px] font-bold flex items-center justify-center shrink-0 mt-0.5">3</span>
+          <div>
+            <h3 class="text-xs font-bold text-slate-800">Evidência de Hardening</h3>
+            <p class="text-[11px] text-slate-600 leading-snug mt-0.5">
               Exigir fotos de caixas soldadas, chapas de aço e trancamento antes de classificar o site como <em>Protegido</em>.
             </p>
           </div>
         </div>
+      </div>
 
-        <div id="bo-alert-banner" class="mt-3 bg-rose-50 border border-rose-200 rounded-lg p-2.5 flex items-center justify-between">
-          <div class="flex items-center gap-2">
-            <i class="fa-solid fa-triangle-exclamation text-rose-600 text-sm"></i>
-            <span class="text-xs text-rose-900 font-medium" id="bo-alert-text">Verificando pendências de Boletim de Ocorrência...</span>
-          </div>
-          <button onclick="filterSemBO()" class="text-[11px] font-bold text-rose-700 underline hover:text-rose-900">Filtrar sem BO</button>
+      <div id="bo-alert-banner" class="mt-2.5 bg-rose-50 border border-rose-200 rounded-lg px-3 py-1.5 flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <i class="fa-solid fa-triangle-exclamation text-rose-600 text-xs"></i>
+          <span class="text-xs text-rose-900 font-medium" id="bo-alert-text">Verificando pendências de Boletim de Ocorrência...</span>
         </div>
+        <button onclick="filterSemBO()" class="text-xs font-bold text-rose-700 underline hover:text-rose-900">Filtrar sem BO</button>
       </div>
     </section>
 
     <!-- TABELA TRANSACIONAL -->
     <section class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-      <div class="p-4 border-b border-slate-100 flex flex-wrap items-center justify-between gap-4">
+      <div class="p-3.5 border-b border-slate-100 flex flex-wrap items-center justify-between gap-4">
         <div>
           <h2 class="text-xs font-bold uppercase tracking-wider text-slate-800 flex items-center gap-1.5">
             <i class="fa-solid fa-table-list text-sky-600"></i> Base Transacional de Ocorrências (Google Sheets)
           </h2>
-          <p class="text-[11px] text-slate-400">Sincronizado automaticamente com a planilha do Google Drive</p>
+          <p class="text-[10px] text-slate-400">Sincronizado automaticamente com a planilha do Google Drive</p>
         </div>
 
         <div class="flex items-center gap-2">
           <span class="text-xs text-slate-500" id="rows-count">Exibindo 0 ocorrências</span>
-          <button onclick="resetFilters()" class="text-xs text-slate-600 hover:text-sky-600 px-2.5 py-1 border border-slate-200 rounded hover:bg-slate-50 transition">
+          <button onclick="resetFilters()" class="text-xs text-slate-600 hover:text-sky-600 px-2 py-1 border border-slate-200 rounded hover:bg-slate-50 transition">
             Limpar Filtros
           </button>
         </div>
       </div>
 
-      <div class="overflow-x-auto max-h-[500px]">
+      <div class="overflow-x-auto max-h-[460px]">
         <table class="w-full text-left border-collapse text-xs">
           <thead class="bg-slate-50 text-slate-600 uppercase text-[10px] tracking-wider font-semibold sticky top-0 z-10 border-b border-slate-200">
             <tr>
-              <th class="p-3">Data / ID</th>
-              <th class="p-3">Regional / DDD</th>
-              <th class="p-3">Site / O.S. PRISMA</th>
-              <th class="p-3">Item Afetado</th>
-              <th class="p-3">Recuperação & Material</th>
-              <th class="p-3">Status de Proteção</th>
-              <th class="p-3">Reincidência</th>
-              <th class="p-3">B.O.</th>
-              <th class="p-3 text-center">Detalhes</th>
+              <th class="p-2.5">Data / ID</th>
+              <th class="p-2.5">Regional / DDD</th>
+              <th class="p-2.5">Site / O.S. PRISMA</th>
+              <th class="p-2.5">Item Afetado</th>
+              <th class="p-2.5">Recuperação & Material</th>
+              <th class="p-2.5">Status de Proteção</th>
+              <th class="p-2.5">Reincidência</th>
+              <th class="p-2.5">B.O.</th>
+              <th class="p-2.5 text-center">Detalhes</th>
             </tr>
           </thead>
           <tbody id="table-body" class="divide-y divide-slate-100 font-normal text-slate-700">
@@ -399,7 +403,7 @@
         </table>
       </div>
 
-      <div class="p-3 bg-slate-50 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+      <div class="p-2.5 bg-slate-50 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
         <span>Dados lidos em tempo real via Google Sheets CSV</span>
         <span id="sheet-status-footer">Status: Conectado</span>
       </div>
@@ -423,8 +427,8 @@
         </button>
       </div>
 
-      <div class="p-6 space-y-4 max-h-[80vh] overflow-y-auto text-xs">
-        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-slate-50 p-3 rounded-xl border border-slate-200">
+      <div class="p-5 space-y-4 max-h-[80vh] overflow-y-auto text-xs">
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 bg-slate-50 p-3 rounded-xl border border-slate-200">
           <div>
             <span class="text-[10px] text-slate-400 uppercase font-semibold block">Data Evento</span>
             <span class="font-bold text-slate-800" id="m-data">--</span>
@@ -443,8 +447,8 @@
           </div>
         </div>
 
-        <div class="border border-slate-200 rounded-xl p-3.5">
-          <h4 class="font-bold text-slate-800 text-xs flex items-center gap-1.5 mb-2">
+        <div class="border border-slate-200 rounded-xl p-3">
+          <h4 class="font-bold text-slate-800 text-xs flex items-center gap-1.5 mb-1.5">
             <i class="fa-solid fa-wrench text-amber-600"></i> Status de Recuperação
           </h4>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-slate-600">
@@ -459,15 +463,15 @@
           </div>
         </div>
 
-        <div class="border border-slate-200 rounded-xl p-3.5 bg-slate-50/50">
-          <h4 class="font-bold text-slate-800 text-xs flex items-center gap-1.5 mb-2">
+        <div class="border border-slate-200 rounded-xl p-3 bg-slate-50/50">
+          <h4 class="font-bold text-slate-800 text-xs flex items-center gap-1.5 mb-1.5">
             <i class="fa-solid fa-shield-cat text-sky-600"></i> Medidas Físicas de Hardening
           </h4>
           <div class="grid grid-cols-2 gap-2 text-[11px]" id="modal-hardening-checklist"></div>
-          <div class="mt-3 pt-3 border-t border-slate-200 text-slate-700">
+          <div class="mt-2.5 pt-2.5 border-t border-slate-200 text-slate-700">
             <p><strong>Pontos ainda vulneráveis:</strong></p>
             <p id="m-vulneraveis" class="text-rose-700 font-medium mt-0.5">--</p>
-            <p class="mt-2 text-slate-500 text-[11px]"><strong>Avaliação de Risco:</strong> <span id="m-risco-texto">--</span></p>
+            <p class="mt-1.5 text-slate-500 text-[11px]"><strong>Avaliação de Risco:</strong> <span id="m-risco-texto">--</span></p>
           </div>
         </div>
       </div>
@@ -480,7 +484,7 @@
 
   <!-- JAVASCRIPT -->
   <script>
-    // Registar o plugin de rótulos globalmente
+    // Registrar Datalabels Globalmente
     Chart.register(ChartDataLabels);
 
     const GOOGLE_SHEETS_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT9vnTCjlHu1HZPX-sgt29TsDb5A-qY8uj0iWZoeTBHaqb8uMLmbX12WpTALmfHutcVw0G8T68MBfTX/pub?gid=222993592&single=true&output=csv';
@@ -516,7 +520,7 @@
             rawData = results.data;
             processData(rawData);
             
-            document.getElementById('loading-banner').className = "bg-emerald-500/10 border-b border-emerald-300/40 text-emerald-900 px-4 py-2 text-xs";
+            document.getElementById('loading-banner').className = "bg-emerald-500/10 border-b border-emerald-300/40 text-emerald-900 px-4 py-1.5 text-xs";
             bannerText.innerHTML = `<strong>Sucesso:</strong> Base sincronizada com ${ocorrenciasData.length} registros da Planilha Google!`;
             document.getElementById('clock-timestamp').innerText = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
           } else {
@@ -530,7 +534,7 @@
     }
 
     function showError(msg) {
-      document.getElementById('loading-banner').className = "bg-rose-500/10 border-b border-rose-300/40 text-rose-900 px-4 py-2 text-xs";
+      document.getElementById('loading-banner').className = "bg-rose-500/10 border-b border-rose-300/40 text-rose-900 px-4 py-1.5 text-xs";
       document.getElementById('loading-text').innerHTML = `<strong>Atenção:</strong> ${msg}`;
     }
 
@@ -556,6 +560,7 @@
         const itemAfetado = getVal(['Itens Vandalizados', 'Item Vandalizado', 'Item Furtado', 'Item']) || 'Não especificado';
         const impacto = getVal(['Impacto Operacional', 'Impacto']) || 'Não informado';
         
+        // Status Recuperação
         const rawRec = getVal(['Status Recuperação', 'Recuperação', 'Status Rec']);
         let recuperacao = 'Pendente de Recuperação';
         if (cleanStr(rawRec).includes('definitiv')) {
@@ -566,8 +571,17 @@
 
         const material = getVal(['Material Utilizado', 'Material']) || 'N/A';
         const pendencia = getVal(['Pendências', 'Pendencia']) || 'Nenhuma';
-        const protecao = getVal(['Status Proteção', 'Hardening', 'Proteção']) || 'Vulnerável';
         
+        // Status de Proteção
+        const rawProt = getVal(['Status Proteção', 'Hardening', 'Proteção']);
+        let protecao = 'Vulnerável';
+        if (cleanStr(rawProt).includes('parcial')) {
+          protecao = 'Parcialmente Protegido';
+        } else if (cleanStr(rawProt).includes('proteg')) {
+          protecao = 'Protegido';
+        }
+        
+        // Validação BO
         const boVal = getVal(['BO Realizado?', 'BO Realizado', 'Boletim Realizado', 'BO']);
         const numBo = getVal(['Nº Boletim Ocorrência', 'Nº Boletim', 'Numero BO', 'Num BO']);
         const hasBO = cleanStr(boVal).includes('sim') || (numBo !== '' && numBo !== '0' && !cleanStr(numBo).includes('nao') && !cleanStr(numBo).includes('n/a'));
@@ -642,61 +656,61 @@
         const recClean = cleanStr(row.recuperacao);
         let recBadge = '';
         if (recClean.includes('definitiv')) {
-          recBadge = `<span class="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200"><i class="fa-solid fa-check"></i> Definitivo</span>`;
+          recBadge = `<span class="inline-flex items-center gap-1 text-[10px] font-semibold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200"><i class="fa-solid fa-check"></i> Definitivo</span>`;
         } else if (recClean.includes('provisor')) {
-          recBadge = `<span class="inline-flex items-center gap-1 text-[11px] font-semibold text-amber-700 bg-amber-50 px-2 py-0.5 rounded border border-amber-200"><i class="fa-solid fa-clock"></i> Provisório</span>`;
+          recBadge = `<span class="inline-flex items-center gap-1 text-[10px] font-semibold text-amber-700 bg-amber-50 px-1.5 py-0.5 rounded border border-amber-200"><i class="fa-solid fa-clock"></i> Provisório</span>`;
         } else {
-          recBadge = `<span class="inline-flex items-center gap-1 text-[11px] font-semibold text-rose-700 bg-rose-50 px-2 py-0.5 rounded border border-rose-200"><i class="fa-solid fa-xmark"></i> Pendente</span>`;
+          recBadge = `<span class="inline-flex items-center gap-1 text-[10px] font-semibold text-rose-700 bg-rose-50 px-1.5 py-0.5 rounded border border-rose-200"><i class="fa-solid fa-xmark"></i> Pendente</span>`;
         }
 
         const protClean = cleanStr(row.protecao);
         let protBadge = '';
         if (protClean.includes('protegido') && !protClean.includes('parcial')) {
-          protBadge = `<span class="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200"><i class="fa-solid fa-lock"></i> Protegido</span>`;
+          protBadge = `<span class="inline-flex items-center gap-1 text-[10px] font-semibold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200"><i class="fa-solid fa-lock"></i> Protegido</span>`;
         } else if (protClean.includes('parcial')) {
-          protBadge = `<span class="inline-flex items-center gap-1 text-[11px] font-semibold text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded border border-indigo-200">Parcial</span>`;
+          protBadge = `<span class="inline-flex items-center gap-1 text-[10px] font-semibold text-indigo-700 bg-indigo-50 px-1.5 py-0.5 rounded border border-indigo-200">Parcial</span>`;
         } else {
-          protBadge = `<span class="inline-flex items-center gap-1 text-[11px] font-semibold text-rose-600 bg-rose-50 px-2 py-0.5 rounded border border-rose-200"><i class="fa-solid fa-unlock"></i> Vulnerável</span>`;
+          protBadge = `<span class="inline-flex items-center gap-1 text-[10px] font-semibold text-rose-600 bg-rose-50 px-1.5 py-0.5 rounded border border-rose-200"><i class="fa-solid fa-unlock"></i> Vulnerável</span>`;
         }
 
         let reincBadge = row.reincidente30d
-          ? `<span class="text-[10px] font-bold text-rose-600 bg-rose-100 px-1.5 py-0.5 rounded">30 Dias</span>`
-          : (row.reincidenteAno ? `<span class="text-[10px] font-medium text-amber-700 bg-amber-50 px-1.5 py-0.5 rounded">No Ano</span>` : `<span class="text-[10px] text-slate-400">1ª Vez</span>`);
+          ? `<span class="text-[9px] font-bold text-rose-600 bg-rose-100 px-1.5 py-0.5 rounded">30 Dias</span>`
+          : (row.reincidenteAno ? `<span class="text-[9px] font-medium text-amber-700 bg-amber-50 px-1.5 py-0.5 rounded">No Ano</span>` : `<span class="text-[9px] text-slate-400">1ª Vez</span>`);
 
         const boBadge = row.hasBOCheck
-          ? `<span class="text-[11px] text-emerald-700 font-medium"><i class="fa-solid fa-file-circle-check"></i> OK</span>` 
-          : `<span class="text-[11px] text-rose-600 font-bold bg-rose-50 px-1 py-0.5 rounded"><i class="fa-solid fa-file-circle-xmark"></i> Pendente</span>`;
+          ? `<span class="text-[10px] text-emerald-700 font-medium"><i class="fa-solid fa-file-circle-check"></i> OK</span>` 
+          : `<span class="text-[10px] text-rose-600 font-bold bg-rose-50 px-1 py-0.5 rounded"><i class="fa-solid fa-file-circle-xmark"></i> Pendente</span>`;
 
         tr.innerHTML = `
-          <td class="p-3">
+          <td class="p-2.5">
             <span class="font-bold text-slate-900 block">${row.data}</span>
-            <span class="text-[10px] text-slate-400 font-mono">${row.id}</span>
+            <span class="text-[9px] text-slate-400 font-mono">${row.id}</span>
           </td>
-          <td class="p-3 font-medium text-slate-700">${row.regional}</td>
-          <td class="p-3">
+          <td class="p-2.5 font-medium text-slate-700">${row.regional}</td>
+          <td class="p-2.5">
             <span class="font-bold text-slate-800 block">${row.codSite} - ${row.nomeSite}</span>
-            <span class="text-[10px] font-mono text-sky-700 bg-sky-50 px-1.5 py-0.2 rounded border border-sky-100">${row.osPrisma}</span>
+            <span class="text-[9px] font-mono text-sky-700 bg-sky-50 px-1.5 py-0.2 rounded border border-sky-100">${row.osPrisma}</span>
           </td>
-          <td class="p-3">
+          <td class="p-2.5">
             <span class="font-medium text-slate-800">${row.itemAfetado}</span>
-            <span class="text-[10px] text-slate-400 block">${row.tipoEvento}</span>
+            <span class="text-[9px] text-slate-400 block">${row.tipoEvento}</span>
           </td>
-          <td class="p-3">
-            <div class="space-y-1">
+          <td class="p-2.5">
+            <div class="space-y-0.5">
               ${recBadge}
-              <div class="text-[10px] text-slate-500">Mat: <strong class="text-slate-700">${row.material}</strong></div>
+              <div class="text-[9px] text-slate-500">Mat: <strong class="text-slate-700">${row.material}</strong></div>
             </div>
           </td>
-          <td class="p-3">${protBadge}</td>
-          <td class="p-3">
+          <td class="p-2.5">${protBadge}</td>
+          <td class="p-2.5">
             <div class="space-y-0.5">
               ${reincBadge}
-              <div class="text-[10px] text-slate-500 truncate max-w-[120px]" title="${row.tipoReincidencia}">${row.tipoReincidencia}</div>
+              <div class="text-[9px] text-slate-500 truncate max-w-[120px]" title="${row.tipoReincidencia}">${row.tipoReincidencia}</div>
             </div>
           </td>
-          <td class="p-3">${boBadge}</td>
-          <td class="p-3 text-center">
-            <button onclick="openModal('${row.id}')" class="p-1.5 text-slate-500 hover:text-sky-600 hover:bg-sky-50 rounded-md transition">
+          <td class="p-2.5">${boBadge}</td>
+          <td class="p-2.5 text-center">
+            <button onclick="openModal('${row.id}')" class="p-1 text-slate-500 hover:text-sky-600 hover:bg-sky-50 rounded transition">
               <i class="fa-solid fa-eye text-xs"></i>
             </button>
           </td>
@@ -741,7 +755,7 @@
 
     function renderTopOffenders() {
       const counts = {};
-      ocorrenciasData.forEach(d => {
+      filteredData.forEach(d => {
         if(!counts[d.codSite]) counts[d.codSite] = { site: d.codSite, nome: d.nomeSite, regional: d.regional, count: 0, status: d.tipoReincidencia };
         counts[d.codSite].count++;
       });
@@ -750,19 +764,24 @@
       const container = document.getElementById('top-offenders-list');
       container.innerHTML = '';
 
+      if (sorted.length === 0) {
+        container.innerHTML = '<p class="text-xs text-slate-400 p-4 text-center">Nenhum site encontrado.</p>';
+        return;
+      }
+
       sorted.forEach((item, idx) => {
         container.innerHTML += `
-          <div class="py-2.5 flex items-center justify-between">
-            <div class="flex items-center gap-3">
-              <span class="w-6 h-6 rounded-full ${idx === 0 ? 'bg-rose-100 text-rose-700' : 'bg-slate-100 text-slate-700'} font-bold text-xs flex items-center justify-center">${idx+1}</span>
+          <div class="py-2 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="w-5 h-5 rounded-full ${idx === 0 ? 'bg-rose-100 text-rose-700' : 'bg-slate-100 text-slate-700'} font-bold text-[11px] flex items-center justify-center">${idx+1}</span>
               <div>
-                <p class="text-xs font-bold text-slate-800">${item.site} • ${item.nome}</p>
+                <p class="text-xs font-bold text-slate-800 leading-tight">${item.site} • ${item.nome}</p>
                 <p class="text-[10px] text-slate-500">${item.regional}</p>
               </div>
             </div>
             <div class="text-right">
               <span class="text-xs font-extrabold ${item.count > 1 ? 'text-rose-600' : 'text-slate-700'}">${item.count} ocorrência(s)</span>
-              <p class="text-[10px] text-amber-600 font-medium">${item.status}</p>
+              <p class="text-[9px] text-amber-600 font-medium">${item.status}</p>
             </div>
           </div>
         `;
@@ -772,7 +791,8 @@
     function initOrUpdateCharts() {
       const totalGeral = filteredData.length;
 
-      // 1. Ocorrências por Regional (DDDs)
+      // 1. OCORRÊNCIAS POR REGIONAL (DDDs)
+      // % NA EXTREMIDADE EXTERNA (end / top) e QTDE NA BASE INTERNA (start / top)
       const regCounts = {};
       filteredData.forEach(d => {
         regCounts[d.regional] = (regCounts[d.regional] || 0) + 1;
@@ -785,7 +805,7 @@
       if (chartRegionaisInst) {
         chartRegionaisInst.data.labels = labelsReg;
         chartRegionaisInst.data.datasets[0].data = dataReg;
-        chartRegionaisInst.options.scales.y.suggestedMax = maxReg + 1;
+        chartRegionaisInst.options.scales.y.suggestedMax = maxReg + (maxReg * 0.3 || 1);
         chartRegionaisInst.update();
       } else {
         const ctxReg = document.getElementById('chart-regionais').getContext('2d');
@@ -798,17 +818,12 @@
           options: {
             responsive: true,
             maintainAspectRatio: false,
+            layout: { padding: { top: 20 } },
             plugins: {
               legend: { display: false },
               datalabels: {
-                anchor: 'end',
-                align: 'top',
-                color: '#1e293b',
-                font: { size: 10, weight: 'bold' },
                 formatter: function(value) {
-                  if (value === 0) return '';
-                  const pct = totalGeral > 0 ? ((value / totalGeral) * 100).toFixed(1) : '0.0';
-                  return `${value} (${pct}%)`;
+                  return value;
                 }
               }
             },
@@ -819,11 +834,41 @@
                 ticks: { stepSize: 1, precision: 0 }
               }
             }
-          }
+          },
+          plugins: [{
+            // Plugin para desenhar: % na ponta externa e Qtde na base interna
+            afterDatasetsDraw(chart) {
+              const { ctx } = chart;
+              chart.data.datasets.forEach((dataset, i) => {
+                const meta = chart.getDatasetMeta(i);
+                meta.data.forEach((bar, index) => {
+                  const val = dataset.data[index];
+                  if (val === 0) return;
+                  const pct = totalGeral > 0 ? ((val / totalGeral) * 100).toFixed(1) + '%' : '0%';
+
+                  ctx.save();
+                  ctx.textAlign = 'center';
+                  
+                  // % NA EXTREMIDADE EXTERNA (Topo)
+                  ctx.fillStyle = '#0f172a';
+                  ctx.font = 'bold 11px Inter, sans-serif';
+                  ctx.fillText(pct, bar.x, bar.y - 6);
+
+                  // QTDE NA BASE INTERNA (Dentro da barra)
+                  ctx.fillStyle = '#ffffff';
+                  ctx.font = 'bold 11px Inter, sans-serif';
+                  ctx.fillText(val, bar.x, bar.base - 8);
+
+                  ctx.restore();
+                });
+              });
+            }
+          }]
         });
       }
 
-      // 2. Gráfico Status de Recuperação (Doughnut)
+      // 2. STATUS DE RECUPERAÇÃO (Doughnut)
+      // % NA EXTREMIDADE EXTERNA e QTDE NA BASE INTERNA
       const recDef = filteredData.filter(d => cleanStr(d.recuperacao).includes('definitiv')).length;
       const recProv = filteredData.filter(d => cleanStr(d.recuperacao).includes('provisor')).length;
       const recPend = filteredData.filter(d => !cleanStr(d.recuperacao).includes('definitiv') && !cleanStr(d.recuperacao).includes('provisor')).length;
@@ -852,17 +897,11 @@
           options: {
             responsive: true,
             maintainAspectRatio: false,
+            layout: { padding: 15 },
             plugins: {
-              legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 10 } } },
+              legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 10 } } },
               datalabels: {
-                color: '#ffffff',
-                font: { size: 11, weight: 'bold' },
-                formatter: function(value) {
-                  if (value === 0 || totalRec === 0) return null;
-                  const pct = ((value / totalRec) * 100).toFixed(1);
-                  return `${value}\n(${pct}%)`;
-                },
-                textAlign: 'center'
+                display: false // Usamos o plugin personalizado abaixo para separar externa (%) e interna (qtde)
               },
               tooltip: {
                 callbacks: {
@@ -874,12 +913,52 @@
                 }
               }
             },
-            cutout: '58%'
-          }
+            cutout: '55%'
+          },
+          plugins: [{
+            afterDatasetsDraw(chart) {
+              const { ctx } = chart;
+              chart.data.datasets.forEach((dataset, i) => {
+                const meta = chart.getDatasetMeta(i);
+                meta.data.forEach((element, index) => {
+                  const val = dataset.data[index];
+                  if (val === 0 || totalRec === 0) return;
+                  const pct = ((val / totalRec) * 100).toFixed(1) + '%';
+
+                  const { startAngle, endAngle, outerRadius, innerRadius, x, y } = element;
+                  const midAngle = startAngle + (endAngle - startAngle) / 2;
+
+                  // 1. QTDE NA BASE INTERNA (Centro da fatia)
+                  const midRadius = (innerRadius + outerRadius) / 2;
+                  const posXInt = x + Math.cos(midAngle) * midRadius;
+                  const posYInt = y + Math.sin(midAngle) * midRadius;
+
+                  ctx.save();
+                  ctx.fillStyle = '#ffffff';
+                  ctx.font = 'bold 11px Inter, sans-serif';
+                  ctx.textAlign = 'center';
+                  ctx.textBaseline = 'middle';
+                  ctx.fillText(val, posXInt, posYInt);
+
+                  // 2. % NA EXTREMIDADE EXTERNA
+                  const outRadius = outerRadius + 14;
+                  const posXExt = x + Math.cos(midAngle) * outRadius;
+                  const posYExt = y + Math.sin(midAngle) * outRadius;
+
+                  ctx.fillStyle = '#1e293b';
+                  ctx.font = 'bold 10px Inter, sans-serif';
+                  ctx.fillText(pct, posXExt, posYExt);
+
+                  ctx.restore();
+                });
+              });
+            }
+          }]
         });
       }
 
-      // 3. Ações de Hardening Executadas (Barras Horizontais)
+      // 3. AÇÕES DE HARDENING EXECUTADAS (Barras Horizontais)
+      // % NA EXTREMIDADE EXTERNA (Right) e QTDE NA BASE INTERNA (Left)
       const hCounts = {
         "Torre": filteredData.filter(d => d.hardening.torre).length,
         "Chapa Aço": filteredData.filter(d => d.hardening.chapaAco).length,
@@ -895,7 +974,7 @@
 
       if (chartHardeningInst) {
         chartHardeningInst.data.datasets[0].data = hValues;
-        chartHardeningInst.options.scales.x.suggestedMax = maxH + 1;
+        chartHardeningInst.options.scales.x.suggestedMax = maxH + (maxH * 0.25 || 1);
         chartHardeningInst.update();
       } else {
         const ctxHard = document.getElementById('chart-hardening').getContext('2d');
@@ -909,19 +988,10 @@
             indexAxis: 'y',
             responsive: true,
             maintainAspectRatio: false,
+            layout: { padding: { right: 35 } },
             plugins: {
               legend: { display: false },
-              datalabels: {
-                anchor: 'end',
-                align: 'right',
-                color: '#1e293b',
-                font: { size: 10, weight: 'bold' },
-                formatter: function(value) {
-                  if (value === 0) return '';
-                  const pct = totalH > 0 ? ((value / totalH) * 100).toFixed(1) : '0.0';
-                  return `${value} (${pct}%)`;
-                }
-              }
+              datalabels: { display: false }
             },
             scales: {
               x: {
@@ -930,11 +1000,42 @@
                 ticks: { stepSize: 1, precision: 0 }
               }
             }
-          }
+          },
+          plugins: [{
+            afterDatasetsDraw(chart) {
+              const { ctx } = chart;
+              chart.data.datasets.forEach((dataset, i) => {
+                const meta = chart.getDatasetMeta(i);
+                meta.data.forEach((bar, index) => {
+                  const val = dataset.data[index];
+                  if (val === 0) return;
+                  const pct = totalH > 0 ? ((val / totalH) * 100).toFixed(1) + '%' : '0%';
+
+                  ctx.save();
+                  ctx.textBaseline = 'middle';
+
+                  // % NA EXTREMIDADE EXTERNA
+                  ctx.textAlign = 'left';
+                  ctx.fillStyle = '#1e293b';
+                  ctx.font = 'bold 10px Inter, sans-serif';
+                  ctx.fillText(pct, bar.x + 5, bar.y);
+
+                  // QTDE NA BASE INTERNA
+                  ctx.textAlign = 'left';
+                  ctx.fillStyle = '#ffffff';
+                  ctx.font = 'bold 10px Inter, sans-serif';
+                  ctx.fillText(val, bar.base + 6, bar.y);
+
+                  ctx.restore();
+                });
+              });
+            }
+          }]
         });
       }
 
-      // 4. Top 10 Itens Mais Afetados (Barras Horizontais)
+      // 4. TOP 10 ITENS MAIS AFETADOS (Barras Horizontais)
+      // % NA EXTREMIDADE EXTERNA (Right) e QTDE NA BASE INTERNA (Left)
       const itemCounts = {};
       filteredData.forEach(d => {
         let itm = d.itemAfetado ? d.itemAfetado.trim() : 'Não especificado';
@@ -947,7 +1048,7 @@
         .sort((a, b) => b[1] - a[1])
         .slice(0, 10);
 
-      const labelsItens = sortedItens.map(i => i[0].length > 40 ? i[0].substring(0, 37) + '...' : i[0]);
+      const labelsItens = sortedItens.map(i => i[0].length > 36 ? i[0].substring(0, 33) + '...' : i[0]);
       const dataItens = sortedItens.map(i => i[1]);
       const totalItens = dataItens.reduce((a, b) => a + b, 0);
       const maxItens = Math.max(...dataItens, 0);
@@ -955,7 +1056,7 @@
       if (chartTopItensInst) {
         chartTopItensInst.data.labels = labelsItens;
         chartTopItensInst.data.datasets[0].data = dataItens;
-        chartTopItensInst.options.scales.x.suggestedMax = maxItens + 1;
+        chartTopItensInst.options.scales.x.suggestedMax = maxItens + (maxItens * 0.25 || 1);
         chartTopItensInst.update();
       } else {
         const ctxTopItens = document.getElementById('chart-top-itens').getContext('2d');
@@ -974,19 +1075,10 @@
             indexAxis: 'y',
             responsive: true,
             maintainAspectRatio: false,
+            layout: { padding: { right: 40 } },
             plugins: {
               legend: { display: false },
-              datalabels: {
-                anchor: 'end',
-                align: 'right',
-                color: '#1e293b',
-                font: { size: 10, weight: 'bold' },
-                formatter: function(value) {
-                  if (value === 0) return '';
-                  const pct = totalItens > 0 ? ((value / totalItens) * 100).toFixed(1) : '0.0';
-                  return `${value} (${pct}%)`;
-                }
-              },
+              datalabels: { display: false },
               tooltip: {
                 callbacks: {
                   title: function(items) {
@@ -1003,7 +1095,37 @@
                 ticks: { stepSize: 1, precision: 0 }
               }
             }
-          }
+          },
+          plugins: [{
+            afterDatasetsDraw(chart) {
+              const { ctx } = chart;
+              chart.data.datasets.forEach((dataset, i) => {
+                const meta = chart.getDatasetMeta(i);
+                meta.data.forEach((bar, index) => {
+                  const val = dataset.data[index];
+                  if (val === 0) return;
+                  const pct = totalItens > 0 ? ((val / totalItens) * 100).toFixed(1) + '%' : '0%';
+
+                  ctx.save();
+                  ctx.textBaseline = 'middle';
+
+                  // % NA EXTREMIDADE EXTERNA
+                  ctx.textAlign = 'left';
+                  ctx.fillStyle = '#1e293b';
+                  ctx.font = 'bold 10px Inter, sans-serif';
+                  ctx.fillText(pct, bar.x + 5, bar.y);
+
+                  // QTDE NA BASE INTERNA
+                  ctx.textAlign = 'left';
+                  ctx.fillStyle = '#ffffff';
+                  ctx.font = 'bold 10px Inter, sans-serif';
+                  ctx.fillText(val, bar.base + 6, bar.y);
+
+                  ctx.restore();
+                });
+              });
+            }
+          }]
         });
       }
     }
@@ -1029,6 +1151,7 @@
 
       renderTable();
       updateKPIs();
+      renderTopOffenders();
       initOrUpdateCharts();
     }
 
@@ -1044,6 +1167,7 @@
       filteredData = ocorrenciasData.filter(d => !d.hasBOCheck);
       renderTable();
       updateKPIs();
+      renderTopOffenders();
       initOrUpdateCharts();
     }
 
