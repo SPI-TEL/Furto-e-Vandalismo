@@ -8,7 +8,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Chart.js CDN -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <!-- PapaParse CDN (Para leitura do CSV do Google Sheets) -->
+  <!-- PapaParse CDN -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
   <!-- Font Awesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -95,10 +95,8 @@
   <!-- MAIN CONTAINER -->
   <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6 flex-1 w-full">
 
-    <!-- KPI CARDS (TOPO) -->
+    <!-- KPI CARDS -->
     <section class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3.5">
-      
-      <!-- Total Ocorrências -->
       <div class="bg-white p-3.5 rounded-xl border border-slate-200/80 shadow-sm flex flex-col justify-between">
         <div class="flex items-center justify-between text-slate-500">
           <span class="text-xs font-medium uppercase tracking-wider">Total Sinistros</span>
@@ -111,7 +109,6 @@
         <p class="text-[10px] text-slate-400 mt-1">Registros na planilha</p>
       </div>
 
-      <!-- Reincidência 30 Dias -->
       <div class="bg-white p-3.5 rounded-xl border border-rose-200 shadow-sm flex flex-col justify-between relative overflow-hidden">
         <div class="absolute top-0 right-0 w-12 h-12 bg-rose-50 rounded-bl-full flex items-start justify-end p-1.5">
           <span class="w-2 h-2 rounded-full bg-rose-600 badge-alert"></span>
@@ -127,7 +124,6 @@
         <p class="text-[10px] text-slate-400 mt-1">Janela de 30 dias</p>
       </div>
 
-      <!-- Reincidência Ano -->
       <div class="bg-white p-3.5 rounded-xl border border-slate-200/80 shadow-sm flex flex-col justify-between">
         <div class="flex items-center justify-between text-slate-500">
           <span class="text-xs font-medium uppercase tracking-wider">Reincidentes Ano</span>
@@ -140,7 +136,6 @@
         <p class="text-[10px] text-slate-400 mt-1">Acumulado no ano</p>
       </div>
 
-      <!-- Recuperados Definitivos vs Provisórios -->
       <div class="bg-white p-3.5 rounded-xl border border-slate-200/80 shadow-sm flex flex-col justify-between">
         <div class="flex items-center justify-between text-slate-500">
           <span class="text-xs font-medium uppercase tracking-wider">Recuperação</span>
@@ -153,7 +148,6 @@
         <p class="text-[10px] text-slate-400 mt-1">Definitivo vs Provisório</p>
       </div>
 
-      <!-- Hardening & Proteção -->
       <div class="bg-white p-3.5 rounded-xl border border-slate-200/80 shadow-sm flex flex-col justify-between">
         <div class="flex items-center justify-between text-slate-500">
           <span class="text-xs font-medium uppercase tracking-wider">Status Hardening</span>
@@ -178,7 +172,6 @@
         </div>
         <p class="text-[10px] text-slate-400 mt-1">Aderência jurídica</p>
       </div>
-
     </section>
 
     <!-- CONTROL BAR & FILTERS -->
@@ -187,8 +180,8 @@
         <!-- Regional Filter -->
         <div class="w-full sm:w-auto">
           <label class="block text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-1">Filtrar Regional / DDD</label>
-          <select id="filter-regional" onchange="applyFilters()" class="w-full sm:w-56 text-xs bg-slate-50 border border-slate-300 rounded-lg p-2 font-medium text-slate-700 focus:ring-2 focus:ring-sky-500 focus:outline-none">
-            <option value="ALL">Todas as Regionais (DDD 12 a 19)</option>
+          <select id="filter-regional" onchange="applyFilters()" class="w-full sm:w-48 text-xs bg-slate-50 border border-slate-300 rounded-lg p-2 font-medium text-slate-700 focus:ring-2 focus:ring-sky-500 focus:outline-none">
+            <option value="ALL">Todas</option>
           </select>
         </div>
 
@@ -225,7 +218,7 @@
       </div>
     </section>
 
-    <!-- CHARTS SECTION -->
+    <!-- CHARTS SECTION (LINHA 1) -->
     <section class="grid grid-cols-1 lg:grid-cols-3 gap-5">
       <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between">
         <div class="flex items-center justify-between mb-2">
@@ -244,20 +237,21 @@
         </div>
       </div>
 
+      <!-- GRÁFICO ATUALIZADO: RECUPERADOS (QTDE E %) -->
       <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between">
         <div class="flex items-center justify-between mb-2">
           <div>
             <h2 class="text-xs font-bold uppercase tracking-wider text-slate-700 flex items-center gap-1.5">
-              <i class="fa-solid fa-chart-pie text-emerald-600"></i> Recuperação vs. Proteção Real
+              <i class="fa-solid fa-chart-pie text-emerald-600"></i> Status de Recuperação
             </h2>
-            <p class="text-[11px] text-slate-400">Comparativo do status físico dos sites</p>
+            <p class="text-[11px] text-slate-400">Definitivo, Provisório e Pendente</p>
           </div>
         </div>
         <div class="h-64 relative">
           <canvas id="chart-rec-prot"></canvas>
         </div>
         <div class="pt-2 text-[11px] text-slate-500 text-center border-t border-slate-100">
-          <p>Validação da segurança física dos sites recuperados</p>
+          <span>Distribuição percentual e absoluta dos sites</span>
         </div>
       </div>
 
@@ -279,7 +273,25 @@
       </div>
     </section>
 
-    <!-- RANKING DE SITES OFENSORES -->
+    <!-- NOVO GRÁFICO: TOP 10 ITENS MAIS AFETADOS -->
+    <section class="grid grid-cols-1 gap-5">
+      <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col">
+        <div class="flex items-center justify-between mb-2 pb-2 border-b border-slate-100">
+          <div>
+            <h2 class="text-xs font-bold uppercase tracking-wider text-slate-700 flex items-center gap-1.5">
+              <i class="fa-solid fa-layer-group text-amber-600"></i> Top 10 Itens Mais Afetados (Furtados / Vandalizados)
+            </h2>
+            <p class="text-[11px] text-slate-400">Ranking por volume total de incidentes</p>
+          </div>
+          <span class="text-[11px] bg-amber-50 text-amber-700 font-semibold px-2 py-0.5 rounded border border-amber-200">Volumetria</span>
+        </div>
+        <div class="h-72 relative">
+          <canvas id="chart-top-itens"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <!-- RANKING DE SITES OFENSORES E ROTEIRO -->
     <section class="grid grid-cols-1 lg:grid-cols-3 gap-5">
       <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col">
         <div class="flex items-center justify-between pb-3 border-b border-slate-100">
@@ -384,7 +396,6 @@
             </tr>
           </thead>
           <tbody id="table-body" class="divide-y divide-slate-100 font-normal text-slate-700">
-            <!-- Renderizado dinamicamente -->
           </tbody>
         </table>
       </div>
@@ -468,7 +479,7 @@
     </div>
   </div>
 
-  <!-- JAVASCRIPT CORRIGIDO -->
+  <!-- JAVASCRIPT -->
   <script>
     const GOOGLE_SHEETS_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT9vnTCjlHu1HZPX-sgt29TsDb5A-qY8uj0iWZoeTBHaqb8uMLmbX12WpTALmfHutcVw0G8T68MBfTX/pub?gid=222993592&single=true&output=csv';
 
@@ -479,8 +490,8 @@
     let chartRegionaisInst = null;
     let chartRecProtInst = null;
     let chartHardeningInst = null;
+    let chartTopItensInst = null;
 
-    // Função Auxiliar para remover acentos e converter para caixa baixa (evita erros em buscas)
     function cleanStr(str) {
       if (!str) return '';
       return str.toString().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
@@ -534,23 +545,34 @@
 
         const id = getVal(['ID Ocorrência', 'ID', 'Ocorrência']) || `OC-2026-${String(index+1).padStart(4, '0')}`;
         const data = getVal(['Data Ocorrência', 'Data']) || 'N/I';
-        const regional = getVal(['Regional', 'DDD']) || 'Outro';
-        const codSite = getVal(['Código do Site', 'Cod Site', 'Site']) || 'N/A';
+        const regional = getVal(['Regional / DDD', 'Regional', 'DDD']) || 'Outro';
+        const codSite = getVal(['Sigla do Site', 'Código do Site', 'Cod Site', 'Site']) || 'N/A';
         const nomeSite = getVal(['Nome do Site', 'Nome Site']) || codSite;
         const osPrisma = getVal(['O.S. PRISMA', 'PRISMA', 'OS']) || 'Pendente';
-        const tipoEvento = getVal(['Tipo de Evento', 'Evento']) || 'Furto';
-        const itemAfetado = getVal(['Item Furtado', 'Item']) || 'Geral';
+        const tipoEvento = getVal(['Tipo de Evento', 'Evento']) || 'Furto/Vandalismo';
+        
+        // Item Afetado / Vandalizado
+        const itemAfetado = getVal(['Itens Vandalizados', 'Item Vandalizado', 'Item Furtado', 'Item']) || 'Não especificado';
         const impacto = getVal(['Impacto Operacional', 'Impacto']) || 'Não informado';
         
-        const recuperacao = getVal(['Status Recuperação', 'Recuperação', 'Status Rec']) || 'Pendente de Recuperação';
+        // Status de Recuperação Padronizado
+        const rawRec = getVal(['Status Recuperação', 'Recuperação', 'Status Rec']);
+        let recuperacao = 'Pendente de Recuperação';
+        if (cleanStr(rawRec).includes('definitiv')) {
+          recuperacao = 'Recuperado Definitivo';
+        } else if (cleanStr(rawRec).includes('provisor')) {
+          recuperacao = 'Recuperado Provisório';
+        }
+
         const material = getVal(['Material Utilizado', 'Material']) || 'N/A';
         const pendencia = getVal(['Pendências', 'Pendencia']) || 'Nenhuma';
-        
         const protecao = getVal(['Status Proteção', 'Hardening', 'Proteção']) || 'Vulnerável';
         
-        const boVal = getVal(['BO Realizado', 'Boletim', 'BO']) || 'Não';
-        const numBo = getVal(['Nº Boletim', 'Numero BO']) || '';
-        const boStr = cleanStr(boVal).includes('sim') ? `Sim (${numBo || 'OK'})` : 'Não';
+        // Validação Robusta de BO (conforme planilha: "BO Realizado?" e "Nº Boletim Ocorrência")
+        const boVal = getVal(['BO Realizado?', 'BO Realizado', 'Boletim Realizado', 'BO']);
+        const numBo = getVal(['Nº Boletim Ocorrência', 'Nº Boletim', 'Numero BO', 'Num BO']);
+        const hasBO = cleanStr(boVal).includes('sim') || (numBo !== '' && numBo !== '0' && !cleanStr(numBo).includes('nao') && !cleanStr(numBo).includes('n/a'));
+        const boStr = hasBO ? `Sim (${numBo || 'OK'})` : 'Não';
 
         const reinc30 = cleanStr(getVal(['Reincidente 30', '30 Dias'])).includes('sim');
         const reincAno = cleanStr(getVal(['Reincidente no Ano', 'Ano'])).includes('sim') || reinc30;
@@ -575,6 +597,7 @@
           reincidente30d: reinc30,
           tipoReincidencia: tipoReinc,
           bo: boStr,
+          hasBOCheck: hasBO,
           risco
         };
       });
@@ -592,7 +615,7 @@
       const select = document.getElementById('filter-regional');
       const regionais = [...new Set(ocorrenciasData.map(d => d.regional))].filter(Boolean);
       
-      select.innerHTML = '<option value="ALL">Todas as Regionais (DDD 12 a 19)</option>';
+      select.innerHTML = '<option value="ALL">Todas</option>';
       regionais.forEach(r => {
         const opt = document.createElement('option');
         opt.value = r;
@@ -641,7 +664,7 @@
           ? `<span class="text-[10px] font-bold text-rose-600 bg-rose-100 px-1.5 py-0.5 rounded">30 Dias</span>`
           : (row.reincidenteAno ? `<span class="text-[10px] font-medium text-amber-700 bg-amber-50 px-1.5 py-0.5 rounded">No Ano</span>` : `<span class="text-[10px] text-slate-400">1ª Vez</span>`);
 
-        const boBadge = row.bo.startsWith("Sim") 
+        const boBadge = row.hasBOCheck
           ? `<span class="text-[11px] text-emerald-700 font-medium"><i class="fa-solid fa-file-circle-check"></i> OK</span>` 
           : `<span class="text-[11px] text-rose-600 font-bold bg-rose-50 px-1 py-0.5 rounded"><i class="fa-solid fa-file-circle-xmark"></i> Pendente</span>`;
 
@@ -704,7 +727,8 @@
       document.getElementById('kpi-protegidos').innerText = protOK;
       document.getElementById('kpi-vulneraveis').innerText = `${protVuln} vuln.`;
 
-      const boCount = filteredData.filter(d => d.bo.startsWith("Sim")).length;
+      // BOs Totalizados Corretamente
+      const boCount = filteredData.filter(d => d.hasBOCheck).length;
       document.getElementById('kpi-bo-abertos').innerText = boCount;
       document.getElementById('kpi-bo-percent').innerText = total > 0 ? `${((boCount/total)*100).toFixed(1)}%` : '0%';
 
@@ -748,6 +772,7 @@
     }
 
     function initOrUpdateCharts() {
+      // 1. Ocorrências por Regional
       const regCounts = {};
       filteredData.forEach(d => {
         regCounts[d.regional] = (regCounts[d.regional] || 0) + 1;
@@ -772,30 +797,53 @@
         });
       }
 
+      // 2. Gráfico Recuperação: Definitivo, Provisório, Pendente (Qtde e %)
       const recDef = filteredData.filter(d => cleanStr(d.recuperacao).includes('definitiv')).length;
       const recProv = filteredData.filter(d => cleanStr(d.recuperacao).includes('provisor')).length;
-      const protOK = filteredData.filter(d => cleanStr(d.protecao).includes('protegido') && !cleanStr(d.protecao).includes('parcial')).length;
-      const protVuln = filteredData.filter(d => cleanStr(d.protecao).includes('vulnera')).length;
+      const recPend = filteredData.filter(d => !cleanStr(d.recuperacao).includes('definitiv') && !cleanStr(d.recuperacao).includes('provisor')).length;
+      const totalRec = recDef + recProv + recPend;
+
+      const recLabels = ['Recuperado Definitivo', 'Recuperado Provisório', 'Pendente de Recuperação'];
+      const recData = [recDef, recProv, recPend];
 
       if (chartRecProtInst) {
-        chartRecProtInst.data.datasets[0].data = [recDef, recProv];
-        chartRecProtInst.data.datasets[1].data = [protOK, protVuln];
+        chartRecProtInst.data.labels = recLabels;
+        chartRecProtInst.data.datasets[0].data = recData;
         chartRecProtInst.update();
       } else {
         const ctxRecProt = document.getElementById('chart-rec-prot').getContext('2d');
         chartRecProtInst = new Chart(ctxRecProt, {
           type: 'doughnut',
           data: {
-            labels: ['Rec. Definitivo', 'Rec. Provisório', 'Protegido', 'Vulnerável'],
-            datasets: [
-              { data: [recDef, recProv], backgroundColor: ['#10b981', '#f59e0b'] },
-              { data: [protOK, protVuln], backgroundColor: ['#10b981', '#f43f5e'] }
-            ]
+            labels: recLabels,
+            datasets: [{
+              data: recData,
+              backgroundColor: ['#10b981', '#f59e0b', '#ef4444'],
+              borderWidth: 2,
+              borderColor: '#ffffff'
+            }]
           },
-          options: { responsive: true, maintainAspectRatio: false, cutout: '50%' }
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 10 } } },
+              tooltip: {
+                callbacks: {
+                  label: function(context) {
+                    const val = context.raw || 0;
+                    const pct = totalRec > 0 ? ((val / totalRec) * 100).toFixed(1) : '0.0';
+                    return ` ${context.label}: ${val} (${pct}%)`;
+                  }
+                }
+              }
+            },
+            cutout: '60%'
+          }
         });
       }
 
+      // 3. Ações de Hardening Executadas
       const hCounts = {
         "Torre": filteredData.filter(d => d.hardening.torre).length,
         "Chapa Aço": filteredData.filter(d => d.hardening.chapaAco).length,
@@ -817,6 +865,61 @@
             datasets: [{ data: Object.values(hCounts), backgroundColor: '#6366f1', borderRadius: 4 }]
           },
           options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+        });
+      }
+
+      // 4. NOVO GRÁFICO: TOP 10 ITENS MAIS AFETADOS
+      const itemCounts = {};
+      filteredData.forEach(d => {
+        let itm = d.itemAfetado ? d.itemAfetado.trim() : 'Não especificado';
+        if (itm) {
+          itemCounts[itm] = (itemCounts[itm] || 0) + 1;
+        }
+      });
+
+      const sortedItens = Object.entries(itemCounts)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 10);
+
+      const labelsItens = sortedItens.map(i => i[0].length > 40 ? i[0].substring(0, 37) + '...' : i[0]);
+      const dataItens = sortedItens.map(i => i[1]);
+
+      if (chartTopItensInst) {
+        chartTopItensInst.data.labels = labelsItens;
+        chartTopItensInst.data.datasets[0].data = dataItens;
+        chartTopItensInst.update();
+      } else {
+        const ctxTopItens = document.getElementById('chart-top-itens').getContext('2d');
+        chartTopItensInst = new Chart(ctxTopItens, {
+          type: 'bar',
+          data: {
+            labels: labelsItens,
+            datasets: [{
+              label: 'Total de Ocorrências',
+              data: dataItens,
+              backgroundColor: '#d97706',
+              borderRadius: 4
+            }]
+          },
+          options: {
+            indexAxis: 'y',
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { display: false },
+              tooltip: {
+                callbacks: {
+                  title: function(items) {
+                    const idx = items[0].dataIndex;
+                    return sortedItens[idx] ? sortedItens[idx][0] : '';
+                  }
+                }
+              }
+            },
+            scales: {
+              x: { ticks: { stepSize: 1, precision: 0 } }
+            }
+          }
         });
       }
     }
@@ -854,7 +957,7 @@
     }
 
     function filterSemBO() {
-      filteredData = ocorrenciasData.filter(d => d.bo.startsWith("Não"));
+      filteredData = ocorrenciasData.filter(d => !d.hasBOCheck);
       renderTable();
       updateKPIs();
       initOrUpdateCharts();
